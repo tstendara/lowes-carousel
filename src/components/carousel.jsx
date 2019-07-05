@@ -10,7 +10,7 @@ const Carousel = (props) => (
             </ol>
             <div class="carousel-inner">
                 <div class="carousel-item active">
-                <img class="d-block w-100" src="../example_data/images/hammer1.jpg" alt="First slide"></img>
+                <img class="d-block w-100" src={props.imageUrl} alt="First slide"></img>
                 </div>
                 <div class="carousel-item">
                 <img class="d-block w-100" src="../example_data/images/hammer2.jpg" alt="Second slide"></img>
