@@ -6,8 +6,8 @@ app.use(express.urlencoded());
 
 app.use(express.static('dist'));
 
-app.get('/*', (req, res) => {
-    res.send('the omniroute hears you');
-});
+// app.get('/*', (req, res) => {
+//     res.send('the omniroute hears you');
+// });
 
 app.listen(3000, () => {console.log('what up i\'m on')});

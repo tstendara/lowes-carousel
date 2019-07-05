@@ -6,7 +6,7 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            url : 'https://fec-lowes.s3.us-east-2.amazonaws.com/hammer1.jpg'
+            // url : 'https://fec-lowes.s3.us-east-2.amazonaws.com/hammer1.jpg'
         }
     }
 

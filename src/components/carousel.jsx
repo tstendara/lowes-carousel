@@ -5,18 +5,47 @@ const Carousel = (props) => (
         <div id="relatedProducts" class="carousel slide" data-ride="carousel">
             <ol class="carousel-indicators">
                 <li data-target="#relatedProducts" data-slide-to="0" class="active"></li>
-                <li data-target="#relatedProducts" data-slide-to="1"></li>
-                <li data-target="#relatedProducts" data-slide-to="2"></li>
+                <li data-target="#relatedProducts" data-slide-to="4"></li>
             </ol>
-            <div class="carousel-inner">
+            <div class="carousel-inner carousel-current-display">
                 <div class="carousel-item active">
-                <img class="d-block w-100" src={props.imageUrl} alt="First slide"></img>
+                    <div class="row carousel-third">
+                        <div class="col">
+                            <img class="d-block w-100" src={props.imageUrl} alt="1 slide"></img>
+                        </div>
+                        <div class="col">
+                            <img class="d-block w-100" src={props.imageUrl} alt="2 slide"></img>
+                        </div>
+                        <div class="col">
+                            <img class="d-block w-100" src={props.imageUrl} alt="3 slide"></img>
+                        </div>
+                    </div>
                 </div>
                 <div class="carousel-item">
-                <img class="d-block w-100" src="../example_data/images/hammer2.jpg" alt="Second slide"></img>
+                    <div class="row carousel-third">
+                        <div class="col">
+                            <img class="d-block w-100" src={props.imageUrl} alt="4 slide"></img>
+                        </div>
+                        <div class="col">
+                            <img class="d-block w-100" src={props.imageUrl} alt="5 slide"></img>
+                        </div>
+                        <div class="col">
+                            <img class="d-block w-100" src={props.imageUrl} alt="6 slide"></img>
+                        </div>
+                    </div>
                 </div>
                 <div class="carousel-item">
-                <img class="d-block w-100" src="../example_data/images/hammer3.jpg" alt="Third slide"></img>
+                    <div class="row carousel-third">
+                        <div class="col">
+                            <img class="d-block w-100" src={props.imageUrl} alt="7 slide"></img>
+                        </div>
+                        <div class="col">
+                            <img class="d-block w-100" src={props.imageUrl} alt="8 slide"></img>
+                        </div>
+                        <div class="col">
+                            <img class="d-block w-100" src={props.imageUrl} alt="9 slide"></img>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
