@@ -1,6 +1,6 @@
 # Project Name
 
-> Project description
+> Lowe's, but not!
 
 ## Related Projects
 
