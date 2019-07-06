@@ -21,6 +21,8 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-multi-carousel": "^1.4.6",
+    "react-slick": "^0.24.0",
+    "slick-carousel": "^1.8.1",
     "style-loader": "^0.23.1"
   },
   "devDependencies": {

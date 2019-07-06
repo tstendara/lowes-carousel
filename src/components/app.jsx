@@ -15,19 +15,24 @@ class App extends React.Component {
                 "https://i.pinimg.com/236x/27/9c/90/279c90b543aa11ff4733a37a9c994896--mega-pokemon-pokemon-funny.jpg"
             ]
         }
+
+        this.handleClick = this.handleClick.bind(this);
     }
 
-    // componentDidMount() {
-    //     Axios.get('s3://fec-lowes/')
-    //     .then((images) => {
-    //         console.log(images);
-    //     })
-    // }
+    handleClick(e, ref) {
+
+        console.log(e.target);
+        console.log(ref.current.id);
+        ref.current.id.carousel('pause');
+    }
+
+    componentDidMount() {
+    }
 
     render() {
         return(
             <div>
-                <Carousel images={this.state.dummyImages}/>
+                <Carousel images={this.state.dummyImages} handleClick={this.handleClick}/>
             </div>
         )
     }
