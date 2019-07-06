@@ -7,6 +7,7 @@ class App extends React.Component {
         super(props);
         this.state = {
             // url : 'https://fec-lowes.s3.us-east-2.amazonaws.com/hammer1.jpg'
+            carouselNames: ['Customers Also Viewed', 'Related Items', 'Previously Viewed']
         }
 
         this.handleClick = this.handleClick.bind(this);
@@ -25,9 +26,9 @@ class App extends React.Component {
     render() {
         return(
             <div>
-                <Carousel handleClick={this.handleClick}/>
-                <Carousel handleClick={this.handleClick}/>
-                <Carousel handleClick={this.handleClick}/>
+                <Carousel handleClick={this.handleClick} name={this.state.carouselNames[0]}/>
+                <Carousel handleClick={this.handleClick} name={this.state.carouselNames[1]}/>
+                <Carousel handleClick={this.handleClick} name={this.state.carouselNames[2]}/>
             </div>
         )
     }
