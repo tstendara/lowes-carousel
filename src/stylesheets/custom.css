@@ -41,3 +41,25 @@
     font-size: 1rem;
     color: #333;
   }
+
+  .slick-prev {
+      left: 10px;
+  }
+
+  .slick-next {
+      right: 10px;
+  }
+
+  .slick-next, .slick-prev {
+    top: 20%;
+    padding: 0 10px;
+    border: none;
+    outline: 0;
+    background: #0471AF;
+    opacity: .9;
+    z-index: 1;
+  }
+
+  .slick-prev:before, .slick-next:before{
+    color:#0471AF;
+}

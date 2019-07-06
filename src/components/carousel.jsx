@@ -1,8 +1,6 @@
 import React from 'react';
 import Slide from './slide.jsx';
 import Slider from "react-slick";
-import SlideImage from './slideImage.jsx';
-
 
 class Carousel extends React.Component {
     constructor(props) {
@@ -36,7 +34,7 @@ class Carousel extends React.Component {
         <h2>{this.props.name}</h2>
         <Slider {...settings}>
             {this.state.dummyImages.map((image, index) => {
-                return <Slide image={image} index={index} />
+                return <Slide image={image} index={index} sale={`i'm on sale baby`}/>
             })}
         </Slider>
         </div>
