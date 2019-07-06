@@ -1,7 +1,17 @@
+.carousel-slide {
+    overflow: hidden;
+}
+
+.carousel-slide img {
+    height: auto;
+    width: 100%;
+  }
+
 .carousel-item {
+    left: -25%;
     width: 150% !important;
 }
 
-.carousel-third .row {
-    width: 33% !important;
+.carousel-item>.row>.col {
+    width: 33.33333% !important;
 }
