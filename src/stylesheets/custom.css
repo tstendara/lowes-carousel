@@ -1,8 +1,27 @@
+  .slick-slider {
+      margin: 25px 0;
+  }
+  
+  .slide-image {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+  }
+  
   .slide-image > img {
     height: 100%;
     width: 100%;
+    object-fit: contain;
   }
 
-  .slick-track {
+  /* .slick-track {
+    height: 300px;
+  } */
+
+  /* .slick-track>div {
+    height: 300px;
+  } */
+
+  .slick-track>div>div {
     height: 300px;
   }

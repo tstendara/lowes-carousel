@@ -23,8 +23,8 @@ class Carousel extends React.Component {
         dots: true,
         infinite: false,
         speed: 600,
-        slidesToShow: 3.5,
-        slidesToScroll: 2
+        slidesToShow: 4.5,
+        slidesToScroll: 3
       };
       return (
         <Slider {...settings}>
