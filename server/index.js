@@ -1,13 +1,18 @@
-const express = require('express');
+const express = require("express");
+
+const PORT = 8080;
+const HOST = "0.0.0.0";
+
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded());
 
-app.use(express.static('dist'));
+app.use(express.static("dist"));
 
 // app.get('/*', (req, res) => {
 //     res.send('the omniroute hears you');
 // });
 
-app.listen(3000, () => {console.log('what up i\'m on')});
+app.listen(PORT, HOST);
+console.log(`what up, i'm on http://${HOST}:${PORT}, baby`);
