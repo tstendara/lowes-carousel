@@ -1,5 +1,15 @@
+@font-face {
+  font-family: loweScript;
+  src: url(./fonts/din-next.woff);
+}
+
+@font-face {
+  font-family: loweScriptIcons;
+  src: url(./fonts/lowes-icons.woff);
+}
+
 body {
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: loweScript;
 }
 
 .slick-slider {
@@ -65,4 +75,13 @@ h6 {
 .slick-prev:before,
 .slick-next:before {
   color: #0471af;
+}
+
+.reviewStars {
+  font-family: loweScriptIcons;
+}
+
+.smallText {
+  font-size: 0.7em;
+  padding-left: 1em;
 }
