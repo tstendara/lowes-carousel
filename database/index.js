@@ -10,6 +10,15 @@ const pool = new Pool({
   port: CONFIG.port
 });
 
+const selectAll = async () => {
+  try{
+    const { rows } = await pool.query(`SELECT * FROM images;`)
+    console.log(rows);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 // pool
 //   .query("SELECT * FROM images")
 //   .then(res => console.log(`user: ${res.rows[0].src}`))
@@ -35,6 +44,8 @@ const insertScrapings = async (scrapings) => {
   }
 }
 
-insertScrapings(scrapedJSON);
+
+
+selectAll();
 
 
