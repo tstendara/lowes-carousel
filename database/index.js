@@ -1,5 +1,6 @@
 const { Pool, Client } = require("pg");
 const CONFIG = require("../config/db.config.json");
+const scrapedJSON = require("../scrapedData/scrapings.json");
 
 const pool = new Pool({
   host: CONFIG.host,
@@ -9,24 +10,31 @@ const pool = new Pool({
   port: CONFIG.port
 });
 
-pool
-  .query("SELECT * FROM images")
-  .then(res => console.log(`user: ${res.rows[0].src}`))
-  .catch(err =>
-    setImmediate(() => {
-      throw err;
-    })
-  );
+// pool
+//   .query("SELECT * FROM images")
+//   .then(res => console.log(`user: ${res.rows[0].src}`))
+//   .catch(err =>
+//     setImmediate(() => {
+//       throw err;
+//     })
+//   );
 
-// const client = new Client({
-//   user: "psjwwzus",
-//   host: "raja.db.elephantsql.com",
-//   database: "psjwwzus",
-//   password: "qbTuaeQ-qqChIyyP27u1dg5GI2oLs4Bv",
-//   port: 5432
-// });
+const insertScrapings = async (scrapings) => {
+  try {
+    for (let i = 1; i < 101; i++) {
+      const key = i.toString();
+      const current = scrapings[key];
+      console.log(current);
+      await pool
+        .query(`INSERT INTO images (name, src, category, subCategory) 
+        VALUES ('${current.name}', '${current.src}', '${current.category}', '${current.subCategory}');`)
+    }
+  }
+  catch (err) {
+    console.log(err);
+  }
+}
 
-// client.query("SELECT NOW()", (err, res) => {
-//   console.log(err, res);
-//   client.end();
-// });
+insertScrapings(scrapedJSON);
+
+
