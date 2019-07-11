@@ -1,0 +1,86 @@
+@font-face {
+  font-family: loweScript;
+  src: url(./fonts/din-next.woff);
+}
+
+@font-face {
+  font-family: loweScriptIcons;
+  src: url(./fonts/lowes-icons.woff);
+}
+
+body {
+  font-family: loweScript;
+}
+
+.slick-slider {
+  margin: 25px 0;
+}
+
+.slide,
+.slick-track > div > div {
+  height: 400px;
+}
+
+.slide {
+  margin: 2px 4px;
+}
+
+.slide-image {
+  height: 60%;
+  object-fit: contain;
+}
+
+.slide-image > img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+
+.total-carousel-container h2 {
+  font-size: 28px;
+  font-size: 2rem;
+  font-weight: 400;
+  text-align: center;
+}
+
+p {
+  color: green;
+}
+
+h6 {
+  font-size: 14px;
+  font-size: 1rem;
+  color: #333;
+}
+
+.slick-prev {
+  left: 10px;
+}
+
+.slick-next {
+  right: 10px;
+}
+
+.slick-next,
+.slick-prev {
+  top: 20%;
+  padding: 0 10px;
+  border: none;
+  outline: 0;
+  opacity: 0.9;
+  z-index: 1;
+}
+
+.slick-prev::before,
+.slick-next::before {
+  color: #0471af;
+}
+
+.reviewStars {
+  font-family: loweScriptIcons;
+}
+
+.smallText {
+  font-size: 0.7em;
+  padding-left: 1em;
+}

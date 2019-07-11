@@ -1,9 +1,9 @@
-import React from 'react';
+import React from "react";
 
-const SaleInfo = (props) => (
-    <>
-        <p>{props.sale}</p>
-    </>
-)
+const SaleInfo = props => (
+  <>
+    <p>{props.sale}</p>
+  </>
+);
 
 export default SaleInfo;
