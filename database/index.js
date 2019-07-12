@@ -10,10 +10,20 @@ const pool = new Pool({
   port: CONFIG.port
 });
 
+
 const selectAll = async () => {
-  try{
+  try {
     const { rows } = await pool.query(`SELECT * FROM images;`)
     console.log(rows);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const selectRelatedItems = async () => {
+  try {
+    const { items } = await pool.query(`SELECT `)
+    console.log(items);
   } catch (err) {
     console.log(err);
   }
@@ -28,15 +38,17 @@ const selectAll = async () => {
 //     })
 //   );
 
+
+
 const insertScrapings = async (scrapings) => {
   try {
     for (let i = 1; i < 101; i++) {
       const key = i.toString();
       const current = scrapings[key];
+      const qText = `INSERT INTO images (name, src, alt, category, subCategory) VALUES ($1, $2, $3, $4, $5);`;
+      const qValues = [current.name, current.src, current.alt, current.category, current.subCategory];
+      await pool.query(qText, qValues)
       console.log(current);
-      await pool
-        .query(`INSERT INTO images (name, src, category, subCategory) 
-        VALUES ('${current.name}', '${current.src}', '${current.category}', '${current.subCategory}');`)
     }
   }
   catch (err) {
@@ -44,8 +56,10 @@ const insertScrapings = async (scrapings) => {
   }
 }
 
+// selectAll();
 
-
-selectAll();
-
+insertScrapings(scrapedJSON)
+  .catch((err) => {
+    console.log(err);
+  });
 
