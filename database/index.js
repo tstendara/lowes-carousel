@@ -1,4 +1,4 @@
-const { Pool, Client } = require("pg");
+const { Pool } = require("pg");
 const CONFIG = require("../config/db.config.json");
 const scrapedJSON = require("../scrapedData/scrapings.json");
 
@@ -10,56 +10,95 @@ const pool = new Pool({
   port: CONFIG.port
 });
 
-
 const selectAll = async () => {
   try {
-    const { rows } = await pool.query(`SELECT * FROM images;`)
+    const { rows } = await pool.query(`SELECT * FROM images;`);
     console.log(rows);
   } catch (err) {
     console.log(err);
   }
 };
 
-const selectRelatedItems = async () => {
+const selectOneById = async itemId => {
+  const qText = `SELECT * FROM images WHERE id = $1`;
+  const qValues = [itemId];
+
   try {
-    const { items } = await pool.query(`SELECT `)
-    console.log(items);
+    const { rows } = await pool.query(qText, qValues);
+    console.log(rows);
   } catch (err) {
     console.log(err);
   }
 };
 
-// pool
-//   .query("SELECT * FROM images")
-//   .then(res => console.log(`user: ${res.rows[0].src}`))
-//   .catch(err =>
-//     setImmediate(() => {
-//       throw err;
-//     })
-//   );
+const selectOneByName = async itemName => {
+  const qText = `SELECT * FROM images WHERE name = $1`;
+  const qValues = [itemName];
 
+  try {
+    const { rows } = await pool.query(qText, qValues);
+    console.log(rows);
+  } catch (err) {
+    console.log(err);
+  }
+};
 
+const selectRelated = async item => {
+  const qText = `SELECT id, name, src, alt FROM images WHERE name != $1 AND category = $2 AND subCategory != $3`;
+  const qValues = [item.name, item.category, item.subCategory];
 
-const insertScrapings = async (scrapings) => {
+  try {
+    const { rows } = await pool.query(qText, qValues);
+    console.log(rows);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const selectSameCategory = async item => {
+  const qText = `SELECT id, name, src, alt FROM images WHERE name != $1 AND subCategory = $2`;
+  const qValues = [item.name, item.subCategory];
+
+  try {
+    const { rows } = await pool.query(qText, qValues);
+    console.log(rows);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const insertScrapings = async scrapings => {
+  const qText = `INSERT INTO images (name, src, alt, category, subCategory) VALUES ($1, $2, $3, $4, $5);`;
+
   try {
     for (let i = 1; i < 101; i++) {
       const key = i.toString();
       const current = scrapings[key];
-      const qText = `INSERT INTO images (name, src, alt, category, subCategory) VALUES ($1, $2, $3, $4, $5);`;
-      const qValues = [current.name, current.src, current.alt, current.category, current.subCategory];
-      await pool.query(qText, qValues)
+      const qValues = [
+        current.name,
+        current.src,
+        current.alt,
+        current.category,
+        current.subCategory
+      ];
+      await pool.query(qText, qValues);
       console.log(current);
     }
-  }
-  catch (err) {
+  } catch (err) {
     console.log(err);
   }
-}
+};
 
-// selectAll();
+module.exports = {
+  selectOneById,
+  selectOneByName,
+  selectRelated,
+  selectSameCategory
+};
 
-insertScrapings(scrapedJSON)
-  .catch((err) => {
-    console.log(err);
-  });
+// node-based testing below
 
+// selectRelated(scrapedJSON["7"])
+//   .catch(err => {
+//     console.log(err);
+//   });
