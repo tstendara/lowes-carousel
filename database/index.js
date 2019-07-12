@@ -13,19 +13,19 @@ const pool = new Pool({
 const selectAll = async () => {
   try {
     const { rows } = await pool.query(`SELECT * FROM images;`);
-    console.log(rows);
+    return rows;
   } catch (err) {
     console.log(err);
   }
 };
 
-const selectOneById = async itemId => {
+const selectOneById = async (itemId) => {
   const qText = `SELECT * FROM images WHERE id = $1`;
   const qValues = [itemId];
 
   try {
     const { rows } = await pool.query(qText, qValues);
-    console.log(rows);
+    return rows;
   } catch (err) {
     console.log(err);
   }
@@ -37,7 +37,7 @@ const selectOneByName = async itemName => {
 
   try {
     const { rows } = await pool.query(qText, qValues);
-    console.log(rows);
+    return rows;
   } catch (err) {
     console.log(err);
   }
@@ -49,7 +49,7 @@ const selectRelated = async item => {
 
   try {
     const { rows } = await pool.query(qText, qValues);
-    console.log(rows);
+    return rows;
   } catch (err) {
     console.log(err);
   }
@@ -61,7 +61,7 @@ const selectSameCategory = async item => {
 
   try {
     const { rows } = await pool.query(qText, qValues);
-    console.log(rows);
+    return rows;
   } catch (err) {
     console.log(err);
   }
