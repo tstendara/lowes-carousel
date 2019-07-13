@@ -16,7 +16,7 @@ class App extends React.Component {
         related: [],
         prevViewed: []
       },
-      productIdQuery: '?id=2'
+      productIdQuery: `?id=${Math.ceil(Math.random() * 100)}`
     };
 
     this.handleClick = this.handleClick.bind(this);
@@ -31,7 +31,6 @@ class App extends React.Component {
   componentDidMount() {
     Axios.get(`http://localhost:3000/carousels${this.state.productIdQuery}`)
       .then((carouselImages) => {
-        console.log(carouselImages.data);
         this.setState({
           carousels: carouselImages.data
         });
@@ -45,17 +44,17 @@ class App extends React.Component {
         <Carousel
           handleClick={this.handleClick}
           name={this.state.carouselNames[0]}
-          images={this.state.carousels.alsoViewed}
+          images={this.state.carousels.alsoViewed.slice(0, 15)}
         />
         <Carousel
           handleClick={this.handleClick}
           name={this.state.carouselNames[1]}
-          images={this.state.carousels.related}
+          images={this.state.carousels.related.slice(0, 15)}
         />
         <Carousel
           handleClick={this.handleClick}
           name={this.state.carouselNames[2]}
-          images={this.state.carousels.prevViewed}
+          images={this.state.carousels.prevViewed.slice(0, 30)}
         />
       </div>
     );
