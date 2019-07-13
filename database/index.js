@@ -10,66 +10,76 @@ const pool = new Pool({
   port: CONFIG.port
 });
 
+pool.on('error', (err, client) => {
+  console.error('Unexpected error on idle client', err);
+  process.exit(-1);
+});
+
 const selectAll = async () => {
+  const client = await pool.connect()
   try {
-    const { rows } = await pool.query(`SELECT * FROM images;`);
+    const { rows } = await client.query(`SELECT * FROM images;`);
     return rows;
-  } catch (err) {
-    console.log(err);
+  } finally {
+    client.release()
   }
 };
 
 const selectOneById = async (itemId) => {
+  const client = await pool.connect()
   const qText = `SELECT * FROM images WHERE id = $1`;
   const qValues = [itemId];
-
+  
   try {
-    const { rows } = await pool.query(qText, qValues);
+    const { rows } = await client.query(qText, qValues);
     return rows;
-  } catch (err) {
-    console.log(err);
+  } finally {
+    client.release();
   }
 };
 
 const selectOneByName = async itemName => {
+  const client = await pool.connect()
   const qText = `SELECT * FROM images WHERE name = $1`;
   const qValues = [itemName];
-
+  
   try {
-    const { rows } = await pool.query(qText, qValues);
+    const { rows } = await client.query(qText, qValues);
     return rows;
-  } catch (err) {
-    console.log(err);
+  } finally {
+    client.release();
   }
 };
 
 const selectRelated = async item => {
+  const client = await pool.connect()
   const qText = `SELECT id, name, src, alt FROM images WHERE name != $1 AND category = $2 AND subCategory != $3`;
-  const qValues = [item.name, item.category, item.subCategory];
-
+  const qValues = [item.name, item.category, item.subcategory];
+  
   try {
-    const { rows } = await pool.query(qText, qValues);
+    const { rows } = await client.query(qText, qValues);
     return rows;
-  } catch (err) {
-    console.log(err);
+  } finally {
+    client.release();
   }
 };
 
 const selectSameCategory = async item => {
+  const client = await pool.connect()
   const qText = `SELECT id, name, src, alt FROM images WHERE name != $1 AND subCategory = $2`;
-  const qValues = [item.name, item.subCategory];
-
+  const qValues = [item.name, item.subcategory];
+  
   try {
-    const { rows } = await pool.query(qText, qValues);
+    const { rows } = await client.query(qText, qValues);
     return rows;
-  } catch (err) {
-    console.log(err);
+  } finally {
+    client.release();
   }
 };
 
 const insertScrapings = async scrapings => {
   const qText = `INSERT INTO images (name, src, alt, category, subCategory) VALUES ($1, $2, $3, $4, $5);`;
-
+  
   try {
     for (let i = 1; i < 101; i++) {
       const key = i.toString();
@@ -96,9 +106,13 @@ module.exports = {
   selectSameCategory
 };
 
-// node-based testing below
+// pool single query method below for likely refactor ---
 
-// selectRelated(scrapedJSON["7"])
-//   .catch(err => {
+// const selectAll = async () => {
+//   try {
+//     const { rows } = await pool.query(`SELECT * FROM images;`);
+//     return rows;
+//   } catch (err) {
 //     console.log(err);
-//   });
+//   }
+// };

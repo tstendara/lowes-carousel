@@ -15,27 +15,14 @@ app.use(express.static("dist"));
 // });
 
 app.get('/carousels', async (req, res) => {
-  try {
     const id = req.body.id;
     const carousels = {};
+    const item = await db.selectOneById(id);
+    
+    carousels.related = await db.selectRelated(item[0]);
+    carousels.alsoViewed = await db.selectSameCategory(item[0]);
 
-    db.selectOneById(id)
-      .then((selectedOne) => {
-        current = selectedOne[0];
-      })
-      .then(() => {
-        const related = db.selectRelated(current)
-        const alsoViewed = db.selectSameCategory(current)
-        Promise.all([related, alsoViewed]).then((returns) => {
-          console.log(returns);
-        })
-      })
-      .then(() => {
-        res.send(carousels);
-      })
-  } catch (err) {
-    console.log(err);
-  } 
+    res.send(carousels);
 });
 
 app.listen(PORT, () => {
