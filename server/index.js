@@ -1,4 +1,5 @@
 const express = require("express");
+const cookieParser = require('cookie-parser');
 const db = require("../database/index.js");
 
 const PORT = 3000;
@@ -7,12 +8,23 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded());
+app.use(cookieParser());
 
 app.use(express.static("dist"));
 
 // app.get('/*', (req, res) => {
 //     res.send('the omniroute hears you');
 // });
+
+app.get('/users', async (req, res) => {
+  if (!req.cookies.user_session) {
+    console.log(req.cookies);
+    res.cookie('user_session', 666).send('Cookie is set');
+  } else {
+    console.log(req.cookies);
+    res.send('you already got a cookie my friend');
+  }
+})
 
 app.get('/carousels/', async (req, res) => {
   const regex = /[\/:. ]+/g;
