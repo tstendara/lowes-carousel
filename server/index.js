@@ -18,8 +18,12 @@ app.use(express.static("dist"));
 
 app.get('/users', async (req, res) => {
   if (!req.cookies.user_session) {
-    console.log(req.cookies);
-    res.cookie('user_session', 666).send('Cookie is set');
+    let sessionId = ''
+    for (let i = 0; i < 8; i++) {
+      sessionId += Math.floor(Math.random() * 9).toString()
+    }
+    await db.createUser(Number(sessionId));
+    res.cookie('user_session', Number(sessionId)).send('Cookie is set');
   } else {
     console.log(req.cookies);
     res.send('you already got a cookie my friend');
