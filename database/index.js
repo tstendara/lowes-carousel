@@ -99,15 +99,14 @@ const insertScrapings = async scrapings => {
   }
 };
 
-
 const updateScrapings = async scrapings => {
-  const qText = `UPDATE images SET src = $2 WHERE alt = $1;`;
+  const qText = `UPDATE images SET src = $2 WHERE id = $1;`;
 
   try {
     for (let i = 1; i < 101; i++) {
       const key = i.toString();
       const current = scrapings[key];
-      const qValues = [current.alt, `https://fec-lowes.s3.us-east-2.amazonaws.com/${current.alt}.png`];
+      const qValues = [current.id, `https://fec-lowes.s3.us-east-2.amazonaws.com/${current.id}.png`];
       await pool.query(qText, qValues);
       console.log(i);
     }

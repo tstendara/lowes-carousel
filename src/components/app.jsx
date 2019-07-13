@@ -18,14 +18,6 @@ class App extends React.Component {
       },
       productIdQuery: `?id=${Math.ceil(Math.random() * 100)}`
     };
-
-    this.handleClick = this.handleClick.bind(this);
-  }
-
-  handleClick(e, ref) {
-    // console.log(e.target);
-    // console.log(ref.current.id);
-    // ref.current.id.carousel('pause');
   }
 
   componentDidMount() {
@@ -42,17 +34,14 @@ class App extends React.Component {
     return (
       <div>
         <Carousel
-          handleClick={this.handleClick}
           name={this.state.carouselNames[0]}
           images={this.state.carousels.alsoViewed.slice(0, 15)}
         />
         <Carousel
-          handleClick={this.handleClick}
           name={this.state.carouselNames[1]}
           images={this.state.carousels.related.slice(0, 15)}
         />
         <Carousel
-          handleClick={this.handleClick}
           name={this.state.carouselNames[2]}
           images={this.state.carousels.prevViewed.slice(0, 30)}
         />
