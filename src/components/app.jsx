@@ -16,11 +16,16 @@ class App extends React.Component {
         related: [],
         prevViewed: []
       },
-      productIdQuery: `?id=${Math.ceil(Math.random() * 100)}`
+      productId: Math.ceil(Math.random() * 100),
+      productIdQuery: `?id=${this.state.productId}`
     };
   }
 
   componentDidMount() {
+    Axios.post(`http://localhost:3000/users/`, {
+      itemId: this.state.productId
+    })
+      .then(())
     Axios.get(`http://localhost:3000/carousels${this.state.productIdQuery}`)
       .then((carouselImages) => {
         this.setState({
