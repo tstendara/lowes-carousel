@@ -14,15 +14,18 @@ app.use(express.static("dist"));
 //     res.send('the omniroute hears you');
 // });
 
-app.get('/carousels', async (req, res) => {
-    const id = req.body.id;
-    const carousels = {};
-    const item = await db.selectOneById(id);
-    
-    carousels.related = await db.selectRelated(item[0]);
-    carousels.alsoViewed = await db.selectSameCategory(item[0]);
+app.get('/carousels/', async (req, res) => {
+  const regex = /[\/:. ]+/g;
+  const id = req.query.id.replace(regex, '');
 
-    res.send(carousels);
+  const item = await db.selectOneById(id);
+  const carousels = {};
+
+  carousels.related = await db.selectRelated(item[0]);
+  carousels.alsoViewed = await db.selectSameCategory(item[0]);
+  carousels.prevViewed = [];
+
+  res.send(carousels);
 });
 
 app.listen(PORT, () => {

@@ -2,7 +2,7 @@ import React from "react";
 
 const SlideImage = props => (
   <div class="slide-image">
-    <img src={props.image} alt={`slide${props.index}`} />
+    <img src={props.src} alt={props.alt} />
   </div>
 );
 
