@@ -32,7 +32,7 @@ const selectOneById = async (itemId) => {
   
   try {
     const { rows } = await client.query(qText, qValues);
-    return rows;
+    return rows[0];
   } finally {
     client.release();
   }
@@ -45,7 +45,7 @@ const selectOneByName = async itemName => {
   
   try {
     const { rows } = await client.query(qText, qValues);
-    return rows;
+    return rows[0];
   } finally {
     client.release();
   }
@@ -71,6 +71,73 @@ const selectSameCategory = async item => {
   
   try {
     const { rows } = await client.query(qText, qValues);
+    return rows;
+  } finally {
+    client.release();
+  }
+};
+
+const createUser = async userSesh => {
+  const client = await pool.connect()
+  const qText = `INSERT INTO users (session) VALUES ($1)`;
+  const qValues = [userSesh];
+  
+  try {
+    const result = await client.query(qText, qValues);
+    return result;
+  } finally {
+    client.release();
+  }
+};
+
+const getUser = async userSesh => {
+  const client = await pool.connect()
+  const qText = `SELECT * FROM users WHERE session = $1`;
+  const qValues = [userSesh];
+  
+  try {
+    const { rows } = await client.query(qText, qValues);
+    return rows[0];
+  } finally {
+    client.release();
+  }
+};
+
+const recordView = async (userId, itemId) => {
+  const client = await pool.connect()
+  const qText = `INSERT INTO userHistory (userId, imageId) VALUES ($1, $2)`;
+  const qValues = [userId, itemId];
+  
+  try {
+    const result = await client.query(qText, qValues);
+    return result;
+  } finally {
+    client.release();
+  }
+};
+
+const getUserHistory = async userSesh => {
+  const client = await pool.connect()
+  const qText = `SELECT images.id, images.name, images.src, images.alt FROM images, userHistory, users 
+  WHERE images.id = userHistory.imageId AND users.id = userHistory.userId AND users.session = $1
+  ORDER BY userHistory.id DESC;`;
+  const qValues = [userSesh];
+  
+  try {
+    const { rows } = await client.query(qText, qValues);
+    return rows;
+  } finally {
+    client.release();
+  }
+};
+
+const getAlsoViewedFiller = async () => {
+  const client = await pool.connect()
+  const qText = `SELECT images.id, images.name, images.src, images.alt FROM images, userHistory 
+  WHERE images.id = userHistory.imageId ORDER BY random() limit 15;`;
+  
+  try {
+    const { rows } = await client.query(qText);
     return rows;
   } finally {
     client.release();
@@ -119,7 +186,12 @@ module.exports = {
   selectOneById,
   selectOneByName,
   selectRelated,
-  selectSameCategory
+  selectSameCategory,
+  getAlsoViewedFiller,
+  createUser,
+  getUser,
+  getUserHistory,
+  recordView
 };
 
 // pool single query method below for likely refactor ---
