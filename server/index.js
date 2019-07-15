@@ -13,28 +13,36 @@ app.use(cookieParser());
 
 app.use(express.static("dist"));
 
-app.use(async (req, res, next) => {
-  const id = req.query.id.replace(/[\/:. ]+/g, '');
+const itemLookup = async (req, res, next) => {
+  console.log('query is: ', req.body, 'method is: ', req.method);
+  let id;
+  if (req.method === 'POST') {
+    id = req.body.itemId.toString().replace(/[\/:. ]+/g, '');
+  } else if (req.method === 'GET') {
+    id = req.query.id.replace(/[\/:. ]+/g, '');
+  }
   req.body.item = await db.selectOneById(id);
   next();
-});
+};
 
-app.get('/users', async (req, res) => {
+app.post('/users', itemLookup, async (req, res) => {
+  console.log('users POST route says: ', req.body);
   const item = req.body.item;
   if (!req.cookies.user_session) {
     const sessionId = helpers.randomStringifiedNumberOfLength(8);
     await db.createUser(Number(sessionId));
     const user = await db.getUser(sessionId);
     await db.recordView(user.id, item.id);    
-    res.cookie('user_session', Number(sessionId)).send('Cookie is set');
+    res.cookie('user_session', Number(sessionId)).status(201).send();
   } else {
     const user = await db.getUser(req.cookies.user_session);
     await db.recordView(user.id, item.id);
-    res.send();
+    res.status(201).send();
   }
 });
 
-app.get('/carousels', async (req, res) => {
+app.get('/carousels', itemLookup, async (req, res) => {
+  console.log('users GET route says: ', req.query);
   const item = req.body.item;
   const carousels = {};
 

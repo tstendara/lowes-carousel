@@ -16,21 +16,20 @@ class App extends React.Component {
         related: [],
         prevViewed: []
       },
-      productId: Math.ceil(Math.random() * 100),
-      productIdQuery: `?id=${this.state.productId}`
+      productId: '2'
     };
   }
 
   componentDidMount() {
-    Axios.post(`http://localhost:3000/users/`, {
+    Axios.post(`http://localhost:3000/users`, {
       itemId: this.state.productId
-    })
-      .then(())
-    Axios.get(`http://localhost:3000/carousels${this.state.productIdQuery}`)
-      .then((carouselImages) => {
-        this.setState({
-          carousels: carouselImages.data
-        });
+    }).then(() => {
+        Axios.get(`http://localhost:3000/carousels?id=${this.state.productId}`)
+          .then((carouselImages) => {
+          this.setState({
+            carousels: carouselImages.data
+          });
+        })
       })
       .catch(err => {console.log('react says: ', err)})
   }
