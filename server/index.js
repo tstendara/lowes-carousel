@@ -34,7 +34,9 @@ app.get('/carousels', middleware.itemLookup, async (req, res) => {
   const carousels = {};
 
   carousels.related = await db.selectRelated(item);
-  carousels.alsoViewed = await db.selectSameCategory(item);
+  const sameCategory = await db.selectSameCategory(item);
+  const alsoViewedFiller = await db.getAlsoViewedFiller();
+  carousels.alsoViewed = sameCategory.concat(alsoViewedFiller);
   carousels.prevViewed = await db.getUserHistory(req.cookies.user_session);
 
   res.send(carousels);

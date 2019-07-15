@@ -131,6 +131,19 @@ const getUserHistory = async userSesh => {
   }
 };
 
+const getAlsoViewedFiller = async () => {
+  const client = await pool.connect()
+  const qText = `SELECT images.id, images.name, images.src, images.alt FROM images, userHistory 
+  WHERE images.id = userHistory.imageId ORDER BY random() limit 15;`;
+  
+  try {
+    const { rows } = await client.query(qText);
+    return rows;
+  } finally {
+    client.release();
+  }
+};
+
 const insertScrapings = async scrapings => {
   const qText = `INSERT INTO images (name, src, alt, category, subCategory) VALUES ($1, $2, $3, $4, $5);`;
   
@@ -174,6 +187,7 @@ module.exports = {
   selectOneByName,
   selectRelated,
   selectSameCategory,
+  getAlsoViewedFiller,
   createUser,
   getUser,
   getUserHistory,
