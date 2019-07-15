@@ -116,6 +116,20 @@ const recordView = async (userId, itemId) => {
   }
 };
 
+const getUserHistory = async userSesh => {
+  const client = await pool.connect()
+  const qText = `SELECT images.id, images.name, images.src, images.alt FROM images, userHistory, users 
+  WHERE images.id = userHistory.imageId AND users.id = userHistory.userId AND users.session = $1;`;
+  const qValues = [userSesh];
+  
+  try {
+    const { rows } = await client.query(qText, qValues);
+    return rows;
+  } finally {
+    client.release();
+  }
+};
+
 const insertScrapings = async scrapings => {
   const qText = `INSERT INTO images (name, src, alt, category, subCategory) VALUES ($1, $2, $3, $4, $5);`;
   
@@ -161,6 +175,7 @@ module.exports = {
   selectSameCategory,
   createUser,
   getUser,
+  getUserHistory,
   recordView
 };
 

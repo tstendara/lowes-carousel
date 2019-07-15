@@ -40,7 +40,7 @@ app.get('/carousels', async (req, res) => {
 
   carousels.related = await db.selectRelated(item);
   carousels.alsoViewed = await db.selectSameCategory(item);
-  carousels.prevViewed = [];
+  carousels.prevViewed = await db.getUserHistory(req.cookies.user_session);
 
   res.send(carousels);
 });
