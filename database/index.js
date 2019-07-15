@@ -32,7 +32,7 @@ const selectOneById = async (itemId) => {
   
   try {
     const { rows } = await client.query(qText, qValues);
-    return rows;
+    return rows[0];
   } finally {
     client.release();
   }
@@ -45,7 +45,7 @@ const selectOneByName = async itemName => {
   
   try {
     const { rows } = await client.query(qText, qValues);
-    return rows;
+    return rows[0];
   } finally {
     client.release();
   }
@@ -85,6 +85,19 @@ const createUser = async userSesh => {
   try {
     const result = await client.query(qText, qValues);
     return result;
+  } finally {
+    client.release();
+  }
+};
+
+const getUser = async userSesh => {
+  const client = await pool.connect()
+  const qText = `SELECT * FROM users WHERE session = $1`;
+  const qValues = [userSesh];
+  
+  try {
+    const { rows } = await client.query(qText, qValues);
+    return rows[0];
   } finally {
     client.release();
   }
@@ -147,6 +160,7 @@ module.exports = {
   selectRelated,
   selectSameCategory,
   createUser,
+  getUser,
   recordView
 };
 
