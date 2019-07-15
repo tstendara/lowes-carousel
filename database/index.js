@@ -90,19 +90,18 @@ const createUser = async userSesh => {
   }
 };
 
-
-// const recordView = async itemId => {
-//   const client = await pool.connect()
-//   const qText = `INSERT INTO users FROM images WHERE name != $1 AND subCategory = $2`;
-//   const qValues = [item.name, item.subcategory];
+const recordView = async (userId, itemId) => {
+  const client = await pool.connect()
+  const qText = `INSERT INTO userHistory (userId, imageId) VALUES ($1, $2)`;
+  const qValues = [userId, itemId];
   
-//   try {
-//     const { rows } = await client.query(qText, qValues);
-//     return rows;
-//   } finally {
-//     client.release();
-//   }
-// }
+  try {
+    const result = await client.query(qText, qValues);
+    return result;
+  } finally {
+    client.release();
+  }
+};
 
 const insertScrapings = async scrapings => {
   const qText = `INSERT INTO images (name, src, alt, category, subCategory) VALUES ($1, $2, $3, $4, $5);`;
@@ -147,7 +146,8 @@ module.exports = {
   selectOneByName,
   selectRelated,
   selectSameCategory,
-  createUser
+  createUser,
+  recordView
 };
 
 // pool single query method below for likely refactor ---
