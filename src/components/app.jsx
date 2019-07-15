@@ -16,7 +16,7 @@ class App extends React.Component {
         related: [],
         prevViewed: []
       },
-      productId: '2'
+      productId: Math.ceil(Math.random() * 100).toString()
     };
   }
 

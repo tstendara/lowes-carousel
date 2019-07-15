@@ -119,7 +119,8 @@ const recordView = async (userId, itemId) => {
 const getUserHistory = async userSesh => {
   const client = await pool.connect()
   const qText = `SELECT images.id, images.name, images.src, images.alt FROM images, userHistory, users 
-  WHERE images.id = userHistory.imageId AND users.id = userHistory.userId AND users.session = $1;`;
+  WHERE images.id = userHistory.imageId AND users.id = userHistory.userId AND users.session = $1
+  ORDER BY userHistory.id DESC;`;
   const qValues = [userSesh];
   
   try {

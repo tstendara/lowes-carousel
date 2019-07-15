@@ -1,6 +1,7 @@
 const express = require("express");
 const cookieParser = require('cookie-parser');
 const db = require("../database/index.js");
+const middleware = require("./middleware.js");
 const helpers = require("./helpers.js");
 
 const PORT = 3000;
@@ -13,20 +14,7 @@ app.use(cookieParser());
 
 app.use(express.static("dist"));
 
-const itemLookup = async (req, res, next) => {
-  console.log('query is: ', req.body, 'method is: ', req.method);
-  let id;
-  if (req.method === 'POST') {
-    id = req.body.itemId.toString().replace(/[\/:. ]+/g, '');
-  } else if (req.method === 'GET') {
-    id = req.query.id.replace(/[\/:. ]+/g, '');
-  }
-  req.body.item = await db.selectOneById(id);
-  next();
-};
-
-app.post('/users', itemLookup, async (req, res) => {
-  console.log('users POST route says: ', req.body);
+app.post('/users', middleware.itemLookup, async (req, res) => {
   const item = req.body.item;
   if (!req.cookies.user_session) {
     const sessionId = helpers.randomStringifiedNumberOfLength(8);
@@ -41,8 +29,7 @@ app.post('/users', itemLookup, async (req, res) => {
   }
 });
 
-app.get('/carousels', itemLookup, async (req, res) => {
-  console.log('users GET route says: ', req.query);
+app.get('/carousels', middleware.itemLookup, async (req, res) => {
   const item = req.body.item;
   const carousels = {};
 
