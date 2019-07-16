@@ -1,6 +1,7 @@
 import React from "react";
 import Slide from "./slide.jsx";
 import Slider from "react-slick";
+import "../../dist/style/carousel.less";
 
 const Carousel = props => {
     
