@@ -1,8 +1,9 @@
 import React from "react";
-import "../../dist/style/main.less";
+import styles from "../style/main.less";
+// import "../style/ajax-loader.gif";
 
 const SlideImage = props => (
-  <div class="slide-image">
+  <div class={styles['slide-image']}>
     <img src={props.src} alt={props.alt} />
   </div>
 );
