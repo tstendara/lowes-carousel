@@ -19,6 +19,7 @@ class App extends React.Component {
       productId: Math.ceil(Math.random() * 100).toString()
     };
     this.handleClick = this.handleClick.bind(this);
+    this.emitProductId = this.emitProductId.bind(this);
     this.updateUserHistory = this.updateUserHistory.bind(this);
     this.getCarousels = this.getCarousels.bind(this);
     this.renderCarousels = this.renderCarousels.bind(this);
@@ -28,11 +29,24 @@ class App extends React.Component {
     this.updateUserHistory(this.state.productId)
       .then(this.getCarousels)
       .then(this.renderCarousels)
-      .catch(err => {console.log('react says: ', err)})
+      .catch(err => {console.log('component during mount says: ', err)})
   }
 
   handleClick(e) {
-    console.log(e.target.id);
+    const clickedId = e.target.id.slice(e.target.id.length - 3);
+    console.log('gonna emit: ', clickedId);
+    this.emitProductId(clickedId);
+    this.setState({productId: clickedId})
+    this.updateUserHistory(clickedId)
+      .then(this.getCarousels)
+      .then(this.renderCarousels)
+      .catch(err => {console.log('click handler says: ', err)})
+  }
+
+  emitProductId(productId) {
+    let product = new CustomEvent('product', {detail: {product_id: productId}})
+    window.addEventListener('product', (e) => console.log(e.detail.product_id));
+    window.dispatchEvent(product)
   }
 
   updateUserHistory(selectedProductId) {

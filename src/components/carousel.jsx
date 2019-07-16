@@ -15,10 +15,17 @@ const Carousel = props => {
   };
 
   return (
-    <div class={styles['total-carousel-container']}>
+    <div class={styles["total-carousel-container"]}>
       <h2>{props.name}</h2>
       <Slider {...settings}>
-        {props.images.map((image) => {
+        {props.images.map(image => {
+          {
+            if (image.id.toString().length === 1) {
+              image.id = "00" + image.id;
+            } else if (image.id.toString().length === 2) {
+              image.id = "0" + image.id;
+            }
+          }
           return (
             <Slide
               image={image}
