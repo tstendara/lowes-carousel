@@ -1,13 +1,3 @@
-.total-carousel-container {
-  margin-bottom: 40px;
-  h2 {
-    font-size: 28px;
-    font-size: 2rem;
-    font-weight: 400;
-    text-align: center;
-  }
-}
-
 .slick-prev {
   left: 10px;
 }

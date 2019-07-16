@@ -1,0 +1,11 @@
+.slide {
+  margin: 2px 4px;
+}
+
+.slick-track {
+  margin: 2px 4px;
+}
+
+.slide > div > div, .slick-track > div > div {
+      height: 450px;
+}

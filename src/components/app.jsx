@@ -26,6 +26,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    window.addEventListener('product', (e) => console.log(e.detail.product_id));
     this.updateUserHistory(this.state.productId)
       .then(this.getCarousels)
       .then(this.renderCarousels)
@@ -45,7 +46,6 @@ class App extends React.Component {
 
   emitProductId(productId) {
     let product = new CustomEvent('product', {detail: {product_id: productId}})
-    window.addEventListener('product', (e) => console.log(e.detail.product_id));
     window.dispatchEvent(product)
   }
 
