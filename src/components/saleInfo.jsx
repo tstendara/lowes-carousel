@@ -1,8 +1,9 @@
 import React from "react";
+import styles from "../style/main.less";
 
 const SaleInfo = props => (
   <>
-    <p>{props.sale}</p>
+    <p class={styles["sale-text"]}>{props.sale}</p>
   </>
 );
 

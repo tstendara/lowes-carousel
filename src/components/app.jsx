@@ -18,6 +18,7 @@ class App extends React.Component {
       },
       productId: Math.ceil(Math.random() * 100).toString()
     };
+    this.handleClick = this.handleClick.bind(this);
   }
 
   componentDidMount() {
@@ -34,20 +35,27 @@ class App extends React.Component {
       .catch(err => {console.log('react says: ', err)})
   }
 
+  handleClick(e) {
+    console.log(e.target);
+  }
+
   render() {
     return (
       <div>
         <Carousel
           name={this.state.carouselNames[0]}
           images={this.state.carousels.alsoViewed.slice(0, 15)}
+          handleClick={this.handleClick}
         />
         <Carousel
           name={this.state.carouselNames[1]}
           images={this.state.carousels.related.slice(0, 15)}
+          handleClick={this.handleClick}
         />
         <Carousel
           name={this.state.carouselNames[2]}
           images={this.state.carousels.prevViewed.slice(0, 30)}
+          handleClick={this.handleClick}
         />
       </div>
     );
