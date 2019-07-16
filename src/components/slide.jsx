@@ -1,7 +1,7 @@
 import React from "react";
 import SlideImage from "./slideImage.jsx";
 import SlideInfo from "./slideInfo.jsx";
-import "../../dist/style/slide.less";
+import "../../dist/style/main.less";
 
 const Slide = props => (
   <div class="slide">

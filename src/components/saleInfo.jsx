@@ -1,5 +1,5 @@
 import React from "react";
-import "../../dist/style/saleInfo.less";
+import "../../dist/style/main.less";
 
 const SaleInfo = props => (
   <>

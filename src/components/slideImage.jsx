@@ -1,5 +1,5 @@
 import React from "react";
-import "../../dist/style/slideImage.less";
+import "../../dist/style/main.less";
 
 const SlideImage = props => (
   <div class="slide-image">

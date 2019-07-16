@@ -1,6 +1,6 @@
 import React from "react";
 import SaleInfo from "./saleInfo.jsx";
-import "../../dist/style/slideInfo.less";
+import "../../dist/style/main.less";
 
 const SlideInfo = props => (
   <div class="slide-info">
