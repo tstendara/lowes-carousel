@@ -16,7 +16,7 @@ class App extends React.Component {
         related: [],
         prevViewed: []
       },
-      productId: Math.ceil(Math.random() * 100).toString()
+      productId: "1"
     };
     this.handleClick = this.handleClick.bind(this);
     this.emitProductId = this.emitProductId.bind(this);
