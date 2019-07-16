@@ -16,7 +16,7 @@ class App extends React.Component {
         related: [],
         prevViewed: []
       },
-      productId: Math.ceil(Math.random() * 100).toString()
+      productId: "1"
     };
     this.handleClick = this.handleClick.bind(this);
     this.emitProductId = this.emitProductId.bind(this);
@@ -50,13 +50,13 @@ class App extends React.Component {
   }
 
   updateUserHistory(selectedProductId) {
-    return Axios.post('http://localhost:3000/users', {
+    return Axios.post('http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/users', {
       itemId: selectedProductId
     })
   }
 
   getCarousels() {
-    return Axios.get(`http://localhost:3000/carousels?id=${this.state.productId}`)
+    return Axios.get(`http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/carousels?id=${this.state.productId}`)
   }
 
   renderCarousels(newCarousels) {
