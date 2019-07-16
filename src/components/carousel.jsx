@@ -1,47 +1,44 @@
-import React from 'react';
-import Slide from './slide.jsx';
+import React from "react";
+import Slide from "./slide.jsx";
 import Slider from "react-slick";
+import styles from "../style/main.less";
+import "../style/slick.css";
+import "../style/slick-theme.css";
+import "../style/carousel.css";
 
-class Carousel extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            dummyImages : [
-                "https://oyster.ignimgs.com/mediawiki/apis.ign.com/pokemon-switch/7/7c/Scorbunny.jpg?width=325",
-                "https://oyster.ignimgs.com/mediawiki/apis.ign.com/pokemon-switch/4/40/Sobble.jpg?width=1280",
-                "https://oyster.ignimgs.com/mediawiki/apis.ign.com/pokemon-switch/e/ea/Grookey.jpg?width=325",
-                "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-03-28-11-57/mew.jpg/EG11/resize/300x-1/quality/75/format/jpg",
-                "https://i.pinimg.com/236x/27/9c/90/279c90b543aa11ff4733a37a9c994896--mega-pokemon-pokemon-funny.jpg",
-                "https://oyster.ignimgs.com/mediawiki/apis.ign.com/pokemon-switch/7/7c/Scorbunny.jpg?width=325",
-                "https://oyster.ignimgs.com/mediawiki/apis.ign.com/pokemon-switch/4/40/Sobble.jpg?width=1280",
-                "https://oyster.ignimgs.com/mediawiki/apis.ign.com/pokemon-switch/e/ea/Grookey.jpg?width=325",
-                "https://d2skuhm0vrry40.cloudfront.net/2018/articles/2018-03-28-11-57/mew.jpg/EG11/resize/300x-1/quality/75/format/jpg",
-                "https://i.pinimg.com/236x/27/9c/90/279c90b543aa11ff4733a37a9c994896--mega-pokemon-pokemon-funny.jpg"
-            ]
-        }
-    }
+const Carousel = props => {
+  var settings = {
+    dots: true,
+    infinite: false,
+    speed: 600,
+    slidesToShow: 4.5,
+    slidesToScroll: 3
+  };
 
-    render() {
-      var settings = {
-        dots: true,
-        infinite: false,
-        speed: 600,
-        slidesToShow: 4.5,
-        slidesToScroll: 3
-      };
-      return (
-        <div class="total-carousel-container">
-        <h2>{this.props.name}</h2>
-        <Slider {...settings}>
-            {this.state.dummyImages.map((image, index) => {
-                return <Slide image={image} index={index} sale={`i'm on sale baby`}/>
-            })}
-        </Slider>
-        </div>
-      );
-    }
-  }
+  return (
+    <div class={styles["total-carousel-container"]}>
+      <h2>{props.name}</h2>
+      <Slider {...settings}>
+        {props.images.map(image => {
+          {
+            if (image.id.toString().length === 1) {
+              image.id = "00" + image.id;
+            } else if (image.id.toString().length === 2) {
+              image.id = "0" + image.id;
+            }
+          }
+          return (
+            <Slide
+              image={image}
+              key={`item${image.id}`}
+              sale={`i'm on sale babyyyyy`}
+              handleClick={props.handleClick}
+            />
+          );
+        })}
+      </Slider>
+    </div>
+  );
+};
 
 export default Carousel;
-
-
