@@ -4,13 +4,19 @@ import SlideInfo from "./slideInfo.jsx";
 import styles from "../style/main.less";
 
 const Slide = props => (
-  <div class={styles["slide"]} onClick={props.handleClick}>
+  <div class={styles["slide"]}>
     <SlideImage
       src={props.image.src}
       alt={props.image.alt}
-      index={props.index}
+      id={props.image.id}
+      handleClick={props.handleClick}
     />
-    <SlideInfo name={props.image.name} sale={props.sale} />
+    <SlideInfo
+      name={props.image.name}
+      sale={props.sale}
+      id={props.image.id}
+      handleClick={props.handleClick}
+    />
   </div>
 );
 

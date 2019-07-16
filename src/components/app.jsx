@@ -19,24 +19,36 @@ class App extends React.Component {
       productId: Math.ceil(Math.random() * 100).toString()
     };
     this.handleClick = this.handleClick.bind(this);
+    this.updateUserHistory = this.updateUserHistory.bind(this);
+    this.getCarousels = this.getCarousels.bind(this);
+    this.renderCarousels = this.renderCarousels.bind(this);
   }
 
   componentDidMount() {
-    Axios.post(`http://localhost:3000/users`, {
-      itemId: this.state.productId
-    }).then(() => {
-        Axios.get(`http://localhost:3000/carousels?id=${this.state.productId}`)
-          .then((carouselImages) => {
-          this.setState({
-            carousels: carouselImages.data
-          });
-        })
-      })
+    this.updateUserHistory(this.state.productId)
+      .then(this.getCarousels)
+      .then(this.renderCarousels)
       .catch(err => {console.log('react says: ', err)})
   }
 
   handleClick(e) {
-    console.log(e.target);
+    console.log(e.target.id);
+  }
+
+  updateUserHistory(selectedProductId) {
+    return Axios.post('http://localhost:3000/users', {
+      itemId: selectedProductId
+    })
+  }
+
+  getCarousels() {
+    return Axios.get(`http://localhost:3000/carousels?id=${this.state.productId}`)
+  }
+
+  renderCarousels(newCarousels) {
+    this.setState({
+      carousels: newCarousels.data
+    });
   }
 
   render() {

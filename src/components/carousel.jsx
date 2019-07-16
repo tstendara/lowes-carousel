@@ -18,11 +18,11 @@ const Carousel = props => {
     <div class={styles['total-carousel-container']}>
       <h2>{props.name}</h2>
       <Slider {...settings}>
-        {props.images.map((image, index) => {
+        {props.images.map((image) => {
           return (
             <Slide
               image={image}
-              index={index}
+              key={`item${image.id}`}
               sale={`i'm on sale babyy`}
               handleClick={props.handleClick}
             />
