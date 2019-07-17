@@ -21,9 +21,9 @@ const renderStars = (starCount) => {
   let emptyStar = '\uECE0';
   for (let i = 1; i < 6; i++) {
     let diff = starCount - i;
-    if (diff >= 0.6) {
+    if (diff >= -0.4) {
       result += fullStar;
-    } else if (diff < 0.6 && diff > 0) {
+    } else if (diff <= -0.4 && diff >= -1) {
       result += halfStar;
     } else {
       result += emptyStar;
