@@ -16,7 +16,7 @@ module.exports = {
        }
      },
      {
-       test: /\.(less|css)$/,
+       test: /\.less$/,
        use: [
          {
            loader: "style-loader"
@@ -35,6 +35,10 @@ module.exports = {
          }
        ]
      },
+     {
+      test: /\.css$/i,
+      use: ['style-loader', 'css-loader'],
+    },
     {
       test: /\.(png|jpe?g|gif)$/,
       use: [

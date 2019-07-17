@@ -11,14 +11,14 @@
   font-weight: normal;
   font-style: normal;
 
-  src: url("http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/dist/fonts/slick.eot");
-  src: url("http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/dist/fonts/slick.eot?#iefix")
+  src: url("http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/fonts/slick.eot");
+  src: url("http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/fonts/slick.eot?#iefix")
       format("embedded-opentype"),
-    url("http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/dist/fonts/slick.woff")
+    url("http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/fonts/slick.woff")
       format("woff"),
-    url("http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/dist/fonts/slick.ttf")
+    url("http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/fonts/slick.ttf")
       format("truetype"),
-    url("http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/dist/fonts/slick.svg#slick")
+    url("http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/fonts/slick.svg#slick")
       format("svg");
 }
 /* Arrows */
