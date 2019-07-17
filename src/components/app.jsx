@@ -53,7 +53,6 @@ class App extends React.Component {
 
   handleClick(e) {
     const clickedId = Number(e.target.id.slice(e.target.id.length - 3)).toString();
-    console.log('gonna emit: ', clickedId);
     this.emitProductId(clickedId);
   }
   
@@ -82,7 +81,6 @@ class App extends React.Component {
             const allPriceData = allPrices.data;
             for (let i = 0; i < allPriceData.length; i++) {
               let checkItem = allPriceData[i];
-              console.log(checkItem);
               if (checkItem.SS === Number(item.id)) {
                 arr.push(checkItem.price);
                   if (arr.length === carousel.length) {
@@ -99,7 +97,6 @@ class App extends React.Component {
         this.setState({
           prices: applicablePrices
         });
-        console.log('applic prices should be: ', applicablePrices);
       })
       .catch(err => {console.log(err)})
   }
@@ -122,13 +119,11 @@ class App extends React.Component {
         this.setState({
           reviews: applicableReviews
         });
-        console.log('applic reviews should be: ', applicableReviews);
       })
       .catch(err => {console.log(err)})
   }
   
   renderCarousels(newCarousels) {
-    console.log(newCarousels);
     this.setState({
       carousels: newCarousels.data
     });
