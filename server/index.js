@@ -12,26 +12,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(cookieParser());
-
-const whitelist = [
-  "http://fec-proxy.us-east-1.elasticbeanstalk.com/",
-  "http://lowesproxy-env.6tim4uzsty.us-east-2.elasticbeanstalk.com/",
-  "http://localhost:3000",
-  "http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/",
-  "http://ec2-18-188-213-241.us-east-2.compute.amazonaws.com",
-  "http://ec2-18-225-6-113.us-east-2.compute.amazonaws.com"
-];
-const corsOptions = {
-  origin: function(origin, callback) {
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  }
-};
-
-app.use(cors(corsOptions));
+app.use(cors(middleware.corsOptions));
 
 app.use(express.static("dist"));
 
