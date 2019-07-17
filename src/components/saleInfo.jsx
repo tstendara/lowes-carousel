@@ -3,7 +3,7 @@ import styles from "../style/main.less";
 
 const SaleInfo = props => (
   <>
-    <p class={styles["sale-text"]}>{props.sale}</p>
+    <p className={styles["sale-text"]}>{props.sale}</p>
   </>
 );
 

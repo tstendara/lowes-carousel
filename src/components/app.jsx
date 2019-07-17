@@ -40,11 +40,13 @@ class App extends React.Component {
   componentDidMount() {
     window.addEventListener('product', (e) => {
       const clickedId = e.detail.product_id.toString();
-      this.updateProductView(clickedId);   
+      this.updateProductView(clickedId);
+      this.getReviews();   
     });
     this.updateUserHistory(this.state.productId)
       .then(this.getCarousels)
       .then(this.renderCarousels)
+      .then(this.getReviews)
       .catch(err => {console.log('component during mount says: ', err)})
   }
 
@@ -79,7 +81,7 @@ class App extends React.Component {
         const reviews = {};
         for (let carousel in this.state.carousels) {
           const arr = [];
-          carousel.forEach((item) => {
+          this.state.carousels[carousel].forEach((item) => {
             const reviewData = allReviews.data[item.id - 1].reviewStats;
             arr.push([reviewData.reviewCount, reviewData.averageStars]);
           })
@@ -106,7 +108,6 @@ class App extends React.Component {
     this.setState({productId: newProductId})
     this.updateUserHistory(newProductId)
       .then(this.getCarousels)
-      .then(this.getReviews)
       .then(this.renderCarousels)
       .catch(err => {console.log('event listener says: ', err)})
   }

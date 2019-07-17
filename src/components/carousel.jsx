@@ -16,10 +16,10 @@ const Carousel = props => {
   };
 
   return (
-    <div class={styles["total-carousel-container"]}>
+    <div className={styles["total-carousel-container"]}>
       <h2>{props.name}</h2>
       <Slider {...settings}>
-        {props.images.map(image => {
+        {props.images.map((image, index) => {
           {
             if (image.id.toString().length === 1) {
               image.id = "00" + image.id;
@@ -30,6 +30,7 @@ const Carousel = props => {
           return (
             <Slide
               image={image}
+              reviews={props.reviews[index] || [0,0]}
               key={`item${image.id}`}
               sale={`i'm on sale babyyyyy`}
               handleClick={props.handleClick}
