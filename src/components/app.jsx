@@ -58,20 +58,27 @@ class App extends React.Component {
   getCarousels() {
     return Axios.get(`http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/carousels?id=${this.state.productId}`)
   }
+
+  // getPrices() {
+  //   return Axios.get(`http://ec2-18-188-213-241.us-east-2.compute.amazonaws.com/prices/${this.state.productId}`)
+  // }
+
+  // getReviews() {
+  //   return Axios.get(`http://ec2-18-225-6-113.us-east-2.compute.amazonaws.com/api/product/`)
+  // }
   
   renderCarousels(newCarousels) {
     this.setState({
       carousels: newCarousels.data
     });
   }
-  
+
   updateProductView(newProductId) {
     this.setState({productId: newProductId})
     this.updateUserHistory(newProductId)
       .then(this.getCarousels)
       .then(this.renderCarousels)
       .catch(err => {console.log('event listener says: ', err)})
-    console.log('update tried...', newProductId);
   }
   
   render() {
