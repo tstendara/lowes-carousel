@@ -48,7 +48,7 @@ class App extends React.Component {
       .then(this.renderCarousels)
       .then(this.getPrices)
       .then(this.getReviews)
-      .catch(err => {console.log('component during mount says: ', err)})
+      .catch(err => {console.log(err)})
   }
 
   handleClick(e) {
@@ -68,7 +68,7 @@ class App extends React.Component {
   }
   
   getCarousels() {
-    return Axios.get(`http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/carousels?id=${this.state.productId}`)
+    return Axios.get(`http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/carousels?id=${this.state.productId}`, {withCredentials: true})
   }
 
   getPrices() {
