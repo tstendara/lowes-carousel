@@ -26,7 +26,15 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    window.addEventListener('product', (e) => console.log(e.detail.product_id));
+    window.addEventListener('product', (e) => {
+      const clickedId = e.detail.product_id;
+      this.setState({productId: clickedId})
+      this.updateUserHistory(clickedId)
+      .then(this.getCarousels)
+      .then(this.renderCarousels)
+      .catch(err => {console.log('event listener says: ', err)})
+      console.log(e.detail.product_id);
+      });
     this.updateUserHistory(this.state.productId)
       .then(this.getCarousels)
       .then(this.renderCarousels)
