@@ -1,5 +1,4 @@
 import React from "react";
-import SaleInfo from "./saleInfo.jsx";
 import styles from "../style/main.less";
 
 const SlideInfo = props => (
@@ -10,7 +9,6 @@ const SlideInfo = props => (
       <span className={styles["small-text"]}>({props.reviews[0]})</span>
     </h6>
     <h6 className={styles["price-text"]}>{props.price.toLocaleString('en-EN', { style: 'currency', currency: 'USD' })}</h6>
-    {props.sale ? <SaleInfo sale={props.sale} /> : null}
   </div>
 );
 
@@ -23,7 +21,7 @@ const renderStars = (starCount) => {
     let diff = starCount - i;
     if (diff >= -0.4) {
       result += fullStar;
-    } else if (diff <= -0.4 && diff >= -1) {
+    } else if (diff <= -0.4 && diff > -1) {
       result += halfStar;
     } else {
       result += emptyStar;

@@ -41,9 +41,7 @@ class App extends React.Component {
   componentDidMount() {
     window.addEventListener('product', (e) => {
       const clickedId = e.detail.product_id.toString();
-      this.updateProductView(clickedId);
-      this.getPrices();
-      this.getReviews();   
+      this.updateProductView(clickedId); 
     });
     this.updateUserHistory(this.state.productId)
       .then(this.getCarousels)
@@ -92,7 +90,7 @@ class App extends React.Component {
                   }
               }
             };
-          })
+          });
           prices[carousel] = arr;
         }
         return prices;
@@ -141,6 +139,8 @@ class App extends React.Component {
     this.updateUserHistory(newProductId)
       .then(this.getCarousels)
       .then(this.renderCarousels)
+      .then(this.getPrices)
+      .then(this.getReviews)
       .catch(err => {console.log('event listener says: ', err)})
   }
   
