@@ -32,6 +32,7 @@ class App extends React.Component {
     this.emitProductId = this.emitProductId.bind(this);
     this.updateUserHistory = this.updateUserHistory.bind(this);
     this.getCarousels = this.getCarousels.bind(this);
+    this.getPrices = this.getPrices.bind(this);
     this.getReviews = this.getReviews.bind(this);
     this.renderCarousels = this.renderCarousels.bind(this);
     this.updateProductView = this.updateProductView.bind(this);
@@ -41,11 +42,13 @@ class App extends React.Component {
     window.addEventListener('product', (e) => {
       const clickedId = e.detail.product_id.toString();
       this.updateProductView(clickedId);
+      this.getPrices();
       this.getReviews();   
     });
     this.updateUserHistory(this.state.productId)
       .then(this.getCarousels)
       .then(this.renderCarousels)
+      .then(this.getPrices)
       .then(this.getReviews)
       .catch(err => {console.log('component during mount says: ', err)})
   }
@@ -71,9 +74,37 @@ class App extends React.Component {
     return Axios.get(`http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/carousels?id=${this.state.productId}`)
   }
 
-  // getPrices() {
-  //   return Axios.get(`http://ec2-18-188-213-241.us-east-2.compute.amazonaws.com/prices/${this.state.productId}`)
-  // }
+  getPrices() {
+    Axios.get(`http://ec2-18-188-213-241.us-east-2.compute.amazonaws.com/prices/all`)
+      .then((allPrices) => {
+        const prices = {};
+        for (let carousel in this.state.carousels) {
+          const arr = [];
+          this.state.carousels[carousel].forEach((item) => {
+            const allPriceData = allPrices.data;
+            for (let i = 0; i < allPriceData.length; i++) {
+              let checkItem = allPriceData[i];
+              console.log(checkItem);
+              if (checkItem.SS === Number(item.id)) {
+                arr.push(checkItem.price);
+                  if (arr.length === carousel.length) {
+                    break;
+                  }
+              }
+            };
+          })
+          prices[carousel] = arr;
+        }
+        return prices;
+      })
+      .then((applicablePrices) => {
+        this.setState({
+          prices: applicablePrices
+        });
+        console.log('applic prices should be: ', applicablePrices);
+      })
+      .catch(err => {console.log(err)})
+  }
 
   getReviews() {
     Axios.get(`http://ec2-18-225-6-113.us-east-2.compute.amazonaws.com/api/stats/all`)
@@ -93,7 +124,7 @@ class App extends React.Component {
         this.setState({
           reviews: applicableReviews
         });
-        console.log('applic reviews should be: ',applicableReviews);
+        console.log('applic reviews should be: ', applicableReviews);
       })
       .catch(err => {console.log(err)})
   }
@@ -119,18 +150,21 @@ class App extends React.Component {
         <Carousel
           name={this.state.carouselNames[0]}
           images={this.state.carousels.alsoViewed.slice(0, 15)}
+          prices={this.state.prices.alsoViewed}
           reviews={this.state.reviews.alsoViewed}
           handleClick={this.handleClick}
         />
         <Carousel
           name={this.state.carouselNames[1]}
           images={this.state.carousels.related.slice(0, 15)}
+          prices={this.state.prices.related}
           reviews={this.state.reviews.related}
           handleClick={this.handleClick}
         />
         <Carousel
           name={this.state.carouselNames[2]}
           images={this.state.carousels.prevViewed.slice(0, 30)}
+          prices={this.state.prices.prevViewed}
           reviews={this.state.reviews.prevViewed}
           handleClick={this.handleClick}
         />

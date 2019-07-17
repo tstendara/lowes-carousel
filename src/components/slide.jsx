@@ -16,6 +16,7 @@ const Slide = props => (
       name={props.image.name}
       sale={props.sale}
       id={props.image.id}
+      price={props.price}
       reviews={props.reviews}
       handleClick={props.handleClick}
     />

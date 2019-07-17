@@ -31,6 +31,7 @@ const Carousel = props => {
             <Slide
               image={image}
               reviews={props.reviews[index] || [0,0]}
+              price={props.prices[index] || 0}
               key={`item${image.id}`}
               sale={`i'm on sale babyyyyy`}
               handleClick={props.handleClick}

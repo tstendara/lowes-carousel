@@ -9,7 +9,7 @@ const SlideInfo = props => (
       <span className={styles["review-stars"]}>{renderStars(props.reviews[1])}</span>
       <span className={styles["small-text"]}>({props.reviews[0]})</span>
     </h6>
-    <h6 className={styles["price-text"]}>$$$$</h6>
+    <h6 className={styles["price-text"]}>{props.price.toLocaleString('en-EN', { style: 'currency', currency: 'USD' })}</h6>
     {props.sale ? <SaleInfo sale={props.sale} /> : null}
   </div>
 );
