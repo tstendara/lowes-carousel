@@ -99,6 +99,7 @@ class App extends React.Component {
   }
   
   renderCarousels(newCarousels) {
+    console.log(newCarousels);
     this.setState({
       carousels: newCarousels.data
     });
