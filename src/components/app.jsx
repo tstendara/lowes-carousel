@@ -23,18 +23,14 @@ class App extends React.Component {
     this.updateUserHistory = this.updateUserHistory.bind(this);
     this.getCarousels = this.getCarousels.bind(this);
     this.renderCarousels = this.renderCarousels.bind(this);
+    this.updateProductView = this.updateProductView.bind(this);
   }
 
   componentDidMount() {
     window.addEventListener('product', (e) => {
-      const clickedId = e.detail.product_id;
-      this.setState({productId: clickedId})
-      this.updateUserHistory(clickedId)
-      .then(this.getCarousels)
-      .then(this.renderCarousels)
-      .catch(err => {console.log('event listener says: ', err)})
-      console.log(e.detail.product_id);
-      });
+      const clickedId = e.detail.product_id.toString();
+      this.updateProductView(clickedId);   
+    });
     this.updateUserHistory(this.state.productId)
       .then(this.getCarousels)
       .then(this.renderCarousels)
@@ -42,37 +38,42 @@ class App extends React.Component {
   }
 
   handleClick(e) {
-    const clickedId = e.target.id.slice(e.target.id.length - 3);
+    const clickedId = Number(e.target.id.slice(e.target.id.length - 3)).toString();
     console.log('gonna emit: ', clickedId);
     this.emitProductId(clickedId);
-    this.setState({productId: clickedId})
-    this.updateUserHistory(clickedId)
-      .then(this.getCarousels)
-      .then(this.renderCarousels)
-      .catch(err => {console.log('click handler says: ', err)})
   }
 
+  
   emitProductId(productId) {
     let product = new CustomEvent('product', {detail: {product_id: productId}})
     window.dispatchEvent(product)
   }
-
+  
   updateUserHistory(selectedProductId) {
     return Axios.post('http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/users', {
       itemId: selectedProductId
     })
   }
-
+  
   getCarousels() {
     return Axios.get(`http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/carousels?id=${this.state.productId}`)
   }
-
+  
   renderCarousels(newCarousels) {
     this.setState({
       carousels: newCarousels.data
     });
   }
-
+  
+  updateProductView(newProductId) {
+    this.setState({productId: newProductId})
+    this.updateUserHistory(newProductId)
+      .then(this.getCarousels)
+      .then(this.renderCarousels)
+      .catch(err => {console.log('event listener says: ', err)})
+    console.log('update tried...', newProductId);
+  }
+  
   render() {
     return (
       <div>
