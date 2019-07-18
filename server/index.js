@@ -18,19 +18,22 @@ app.use(express.static("dist"));
 
 app.post("/users", middleware.itemLookup, async (req, res) => {
   const item = req.body.item;
-  if (!req.cookies.user_session) {
+  let user;
+  try {
+    user = await db.getUser(req.cookies.user_session);
+  } catch {
     const sessionId = helpers.randomStringifiedNumberOfLength(8);
-    await db.createUser(Number(sessionId));
-    const user = await db.getUser(sessionId);
-    await db.recordView(user.id, item.id);
-    res
-      .cookie("user_session", Number(sessionId))
-      .status(201)
-      .send();
-  } else {
-    const user = await db.getUser(req.cookies.user_session);
-    await db.recordView(user.id, item.id);
-    res.status(201).send();
+    await db.createUser(sessionId);
+    user = await db.getUser(sessionId);
+    res.cookie("user_session", Number(sessionId));
+  } finally {
+    try {
+      await db.recordView(user.id, item.id);
+    } catch {
+      console.log("dupe caught");
+    } finally {
+      res.status(201).send();
+    }
   }
 });
 
