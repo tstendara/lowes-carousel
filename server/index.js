@@ -29,7 +29,7 @@ app.post("/users", middleware.itemLookup, async (req, res) => {
     await db.recordView(user.id, item.id);
     res.status(201);
   } catch(err) {
-    console.log('dupe attempted probably');
+    console.log('duplicate userHist insertion attempted, probably');
   } finally {
     res.send();
   }
@@ -42,7 +42,7 @@ app.get("/carousels", middleware.itemLookup, async (req, res) => {
   carousels.related = await db.selectRelated(item);
   const sameCategory = await db.selectSameCategory(item);
   const alsoViewedFiller = await db.getAlsoViewedFiller();
-  carousels.alsoViewed = sameCategory.concat(alsoViewedFiller);
+  carousels.alsoViewed = helpers.removeCarouselDupes(sameCategory.concat(alsoViewedFiller));
   carousels.prevViewed = await db.getUserHistory(req.cookies.user_session);
 
   res.send(carousels);
