@@ -17,23 +17,21 @@ app.use(cors(middleware.corsOptions));
 app.use(express.static("dist"));
 
 app.post("/users", middleware.itemLookup, async (req, res) => {
-  const item = req.body.item;
-  let user;
   try {
-    user = await db.getUser(req.cookies.user_session);
-  } catch {
-    const sessionId = helpers.randomStringifiedNumberOfLength(8);
-    await db.createUser(sessionId);
-    user = await db.getUser(sessionId);
-    res.cookie("user_session", Number(sessionId));
+    const item = req.body.item;
+    let sessionId = req.cookies.user_session;
+    if (!req.cookies.user_session) {
+        sessionId = helpers.randomStringifiedNumberOfLength(8);
+        await db.createUser(sessionId);
+        res.cookie("user_session", sessionId);
+      }
+    const user = await db.getUser(sessionId);
+    await db.recordView(user.id, item.id);
+    res.status(201);
+  } catch(err) {
+    console.log('duplicate userHist insertion attempted, probably');
   } finally {
-    try {
-      await db.recordView(user.id, item.id);
-    } catch {
-      console.log("dupe caught");
-    } finally {
-      res.status(201).send();
-    }
+    res.send();
   }
 });
 
@@ -44,9 +42,8 @@ app.get("/carousels", middleware.itemLookup, async (req, res) => {
   carousels.related = await db.selectRelated(item);
   const sameCategory = await db.selectSameCategory(item);
   const alsoViewedFiller = await db.getAlsoViewedFiller();
-  carousels.alsoViewed = sameCategory.concat(alsoViewedFiller);
+  carousels.alsoViewed = helpers.removeCarouselDupes(sameCategory.concat(alsoViewedFiller));
   carousels.prevViewed = await db.getUserHistory(req.cookies.user_session);
-  console.log(carousels);
 
   res.send(carousels);
 });

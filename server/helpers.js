@@ -7,4 +7,11 @@ const randomStringifiedNumberOfLength = (digits) => {
     return result;
 };
 
-module.exports = { randomStringifiedNumberOfLength };
+const removeCarouselDupes = (arr) => {
+  return arr.filter((element, index, array) => {
+    let prev = array[index - 1] || {id:0};
+    return element.id === prev.id ? false : true;
+  })
+}
+
+module.exports = { randomStringifiedNumberOfLength, removeCarouselDupes };

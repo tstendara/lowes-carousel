@@ -131,10 +131,11 @@ const getUserHistory = async userSesh => {
   }
 };
 
-const getAlsoViewedFiller = async () => {
+const getAlsoViewedFiller = async itemId => {
   const client = await pool.connect()
-  const qText = `SELECT images.id, images.name, images.src, images.alt FROM images, userHistory 
-  WHERE images.id = userHistory.imageId ORDER BY random() limit 15;`;
+  const qText = `SELECT DISTINCT images.id, images.name, images.src, images.alt FROM images, userHistory  
+  WHERE images.id = userHistory.imageId limit 15;`;
+  const qValues = [itemId];
   
   try {
     const { rows } = await client.query(qText);
