@@ -1,5 +1,5 @@
 const express = require("express");
-const cookieParser = require('cookie-parser');
+const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const db = require("../database/index.js");
 const middleware = require("./middleware.js");
@@ -12,18 +12,21 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(cookieParser());
-app.use(cors());
+app.use(cors(middleware.corsOptions));
 
 app.use(express.static("dist"));
 
-app.post('/users', middleware.itemLookup, async (req, res) => {
+app.post("/users", middleware.itemLookup, async (req, res) => {
   const item = req.body.item;
   if (!req.cookies.user_session) {
     const sessionId = helpers.randomStringifiedNumberOfLength(8);
     await db.createUser(Number(sessionId));
     const user = await db.getUser(sessionId);
-    await db.recordView(user.id, item.id);    
-    res.cookie('user_session', Number(sessionId)).status(201).send();
+    await db.recordView(user.id, item.id);
+    res
+      .cookie("user_session", Number(sessionId))
+      .status(201)
+      .send();
   } else {
     const user = await db.getUser(req.cookies.user_session);
     await db.recordView(user.id, item.id);
@@ -31,7 +34,7 @@ app.post('/users', middleware.itemLookup, async (req, res) => {
   }
 });
 
-app.get('/carousels', middleware.itemLookup, async (req, res) => {
+app.get("/carousels", middleware.itemLookup, async (req, res) => {
   const item = req.body.item;
   const carousels = {};
 
