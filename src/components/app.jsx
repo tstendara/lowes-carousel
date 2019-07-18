@@ -29,6 +29,7 @@ class App extends React.Component {
       }
     };
     this.handleClick = this.handleClick.bind(this);
+    this.scrollToTop = this.scrollToTop.bind(this);
     this.emitProductId = this.emitProductId.bind(this);
     this.updateUserHistory = this.updateUserHistory.bind(this);
     this.getCarousels = this.getCarousels.bind(this);
@@ -58,6 +59,15 @@ class App extends React.Component {
       e.target.id.slice(e.target.id.length - 3)
     ).toString();
     this.emitProductId(clickedId);
+    this.scrollToTop();
+  }
+
+  scrollToTop() {
+    window.scroll({
+      top: 0,
+      left: 0,
+      behavior: 'auto'
+    });
   }
 
   emitProductId(productId) {
