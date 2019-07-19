@@ -79,7 +79,7 @@ class App extends React.Component {
 
   updateUserHistory(selectedProductId) {
     return Axios.post(
-      "http://localhost:3000/users",
+      "http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/users",
       {
         itemId: selectedProductId
       },
@@ -89,7 +89,7 @@ class App extends React.Component {
 
   getCarousels() {
     return Axios.get(
-      `http://localhost:3000/carousels?id=${
+      `http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/carousels?id=${
         this.state.productId
       }`,
       { withCredentials: true }
