@@ -1,17 +1,20 @@
-
-const randomStringifiedNumberOfLength = (digits) => {
-    let result = '';
-        for (let i = 0; i < digits; i++) {
-          result += Math.floor(Math.random() * 9).toString();
-        }
-    return result;
+const randomStringifiedNumberOfLength = digits => {
+  let result = "";
+  for (let i = 0; i < digits; i++) {
+    result += Math.floor(Math.random() * 9).toString();
+  }
+  return result;
 };
 
-const removeCarouselDupes = (arr) => {
-  return arr.filter((element, index, array) => {
-    let prev = array[index - 1] || {id:0};
-    return element.id === prev.id ? false : true;
-  })
-}
+const concatOnlyUnique = (arr1, arr2) => {
+   return arr1.concat(arr2.filter(element => {
+    for (let i = 0; i < arr1.length; i++) {
+      if (element.id === arr1[i].id) {
+        return false;
+      }
+    }
+    return true;
+  }));
+};
 
-module.exports = { randomStringifiedNumberOfLength, removeCarouselDupes };
+module.exports = { randomStringifiedNumberOfLength, concatOnlyUnique };
