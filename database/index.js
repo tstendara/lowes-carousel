@@ -116,12 +116,12 @@ const recordView = async (userId, itemId) => {
   }
 };
 
-const getUserHistory = async userSesh => {
+const getUserHistory = async (userSesh, itemId) => {
   const client = await pool.connect()
   const qText = `SELECT images.id, images.name, images.src, images.alt FROM images, userHistory, users 
-  WHERE images.id = userHistory.imageId AND users.id = userHistory.userId AND users.session = $1
+  WHERE images.id = userHistory.imageId AND users.id = userHistory.userId AND users.session = $1 AND images.id != $2
   ORDER BY userHistory.id DESC;`;
-  const qValues = [userSesh];
+  const qValues = [userSesh, itemId];
   
   try {
     const { rows } = await client.query(qText, qValues);
@@ -134,11 +134,11 @@ const getUserHistory = async userSesh => {
 const getAlsoViewedFiller = async itemId => {
   const client = await pool.connect()
   const qText = `SELECT DISTINCT images.id, images.name, images.src, images.alt FROM images, userHistory  
-  WHERE images.id = userHistory.imageId limit 15;`;
+  WHERE images.id = userHistory.imageId AND images.id != $1 limit 15;`;
   const qValues = [itemId];
   
   try {
-    const { rows } = await client.query(qText);
+    const { rows } = await client.query(qText, qValues);
     return rows;
   } finally {
     client.release();
