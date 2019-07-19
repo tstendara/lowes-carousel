@@ -3,7 +3,11 @@ import styles from "../style/main.less";
 
 const SlideInfo = props => (
   <div className={styles["slide-info"]}>
-    <h5 id={`name-item${props.id}`} onClick={props.handleClick}>
+    <h5
+      className={styles["three-line-fade"]}
+      id={`name-item${props.id}`}
+      onClick={props.handleClick}
+    >
       {props.name}
     </h5>
     <h6>

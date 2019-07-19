@@ -5,6 +5,8 @@ import styles from "../style/main.less";
 import "../style/slide.css";
 
 const Slide = props => (
+  <div className="container">
+    <div className="row">
   <div className={styles["slide"]}>
     <SlideImage
       src={props.image.src}
@@ -20,6 +22,8 @@ const Slide = props => (
       reviews={props.reviews}
       handleClick={props.handleClick}
     />
+  </div>
+  </div>
   </div>
 );
 

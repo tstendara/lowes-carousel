@@ -12,7 +12,42 @@ const Carousel = props => {
     infinite: false,
     speed: 600,
     slidesToShow: 4.5,
-    slidesToScroll: 3
+    slidesToScroll: 3,
+    responsive: [
+      {
+        breakpoint: 992,
+        settings: {
+          slidesToShow: 3.5,
+          slidesToScroll: 2
+        }
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 2.5,
+          slidesToScroll: 2,
+          arrows: false,
+          speed: 500
+        }
+      },
+      {
+        breakpoint: 576,
+        settings: {
+          slidesToShow: 1.5,
+          slidesToScroll: 1,
+          arrows: false,
+          speed: 450
+        }
+      },
+      {
+        breakpoint: 300, 
+        settings: {
+          slidesToShow: 1,
+          arrows: false,
+          dots: false
+        }
+      }
+    ]
   };
 
   return (
