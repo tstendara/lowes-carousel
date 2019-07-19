@@ -52,6 +52,11 @@
   z-index: 1;
 }
 
+.slick-slider .slick-next:hover, .slick-slider .slick-prev:hover {
+  background: rgb(4, 92, 175);
+  opacity: .95;
+}
+
 .slick-slider .slick-next i {
   color: #FFF;
   font-size: 15px;
