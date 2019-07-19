@@ -91,6 +91,24 @@
   -webkit-font-smoothing: antialiased;
 }
 
+@media (max-width: 768px) {
+  .slick-dots li button:before {
+    font-size: 8px;
+  }
+  .slick-dots li {
+    margin: 0 3px;
+  }
+}
+
+@media (max-width: 576px) {
+  .slick-dots li button:before {
+    font-size: 6px;
+  }
+  .slick-dots li {
+    margin: 0px;
+  }
+}
+
 .slick-dots li.slick-active button:before {
   color: rgb(4, 92, 175);
 }
@@ -101,6 +119,9 @@
   color: #0471AF;
 }
 
+.slick-disabled {
+  display: none !important;
+}
 
 @keyframes expand {
   30% {

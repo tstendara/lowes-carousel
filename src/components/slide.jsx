@@ -7,7 +7,7 @@ import "../style/slide.css";
 const Slide = props => (
   <div className="container">
     <div className="row">
-  <div className={styles["slide"] + "col-sm-8"}>
+  <div className={styles["slide"]}>
     <SlideImage
       src={props.image.src}
       alt={props.image.alt}
