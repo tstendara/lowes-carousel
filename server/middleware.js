@@ -1,5 +1,26 @@
 const db = require("../database/index.js");
 
+const whitelist = [
+  "http://fec-proxy.us-east-1.elasticbeanstalk.com",
+  "http://lowesproxy-env.6tim4uzsty.us-east-2.elasticbeanstalk.com",
+  "http://localhost:3000",
+  "http://localhost:3050",
+  "http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com",
+  "http://ec2-18-188-213-241.us-east-2.compute.amazonaws.com",
+  "http://ec2-18-225-6-113.us-east-2.compute.amazonaws.com"
+];
+
+const corsOptions = {
+  credentials: true,
+  origin: function(origin, callback) {
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  }
+};
+
 const itemLookup = async (req, res, next) => {
     let id;
     let regex = /[\/:. ]+/g;
@@ -12,4 +33,4 @@ const itemLookup = async (req, res, next) => {
     next();
   };
 
-  module.exports = { itemLookup };
+  module.exports = { itemLookup, corsOptions };
