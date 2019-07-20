@@ -6,7 +6,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      productId: "1",
+      productId: "",
       carouselNames: [
         "Customers Also Viewed",
         "Related Items",
@@ -20,20 +20,24 @@ class App extends React.Component {
       reviews: {
         alsoViewed: [],
         related: [],
-        prevViewed: []
+        prevViewed: [],
+        favoritesCarousel: []
       },
       prices: {
         alsoViewed: [],
         related: [],
-        prevViewed: []
+        prevViewed: [],
+        favoritesCarousel: []
       },
       loggedIn: false,
-      username: '',
-      favoritesCarousel: [] 
+      username: "",
+      favoritesCarousel: []
     };
     this.handleClick = this.handleClick.bind(this);
     this.scrollToTop = this.scrollToTop.bind(this);
     this.emitProductId = this.emitProductId.bind(this);
+    this.getProfile = this.getProfile.bind(this);
+    this.createProfile = this.createProfile.bind(this);
     this.updateUserHistory = this.updateUserHistory.bind(this);
     this.updateUserFavorites = this.updateUserFavorites.bind(this);
     this.getCarousels = this.getCarousels.bind(this);
@@ -41,6 +45,7 @@ class App extends React.Component {
     this.getReviews = this.getReviews.bind(this);
     this.getFavorites = this.getFavorites.bind(this);
     this.renderCarousels = this.renderCarousels.bind(this);
+    this.renderFaveCarousel = this.renderFaveCarousel.bind(this);
     this.updateProductView = this.updateProductView.bind(this);
   }
 
@@ -54,42 +59,62 @@ class App extends React.Component {
     });
     window.addEventListener("favorite", e => {
       const favedId = e.detail.product_id.toString();
-      this.state.loggedIn ? 
-        this.updateUserFavorites(this.state.username, favedId)
-        : null
+      this.state.loggedIn
+        ? this.updateUserFavorites(this.state.username, favedId)
+        : null;
     });
     window.addEventListener("loggedIn", e => {
-      this.setState({
-        loggedIn: e.detail.loggedIn,
-        username: e.detail.username
-      })
-      if (loggedOutFaves.length > 0) {
-        const loggedOutFaves = e.detail.favoriteList;
-        const favePromises = loggedOutFaves.map((favedItem) => {
-          return this.updateUserFavorites(favedItem);
-        }); 
-        Promise.all(favePromises)
-          .then(this.getFavorites(e.detail.username))
-          .catch(err => {console.log(err)});
+      if (e.detail.username) {
+        this.getProfile(e.detail.username)
+          .catch(() => {
+            this.createProfile(e.detail.username)
+              .then(() => {
+                this.setState({
+                  loggedIn: e.detail.loggedIn,
+                  username: e.detail.username
+                });
+                console.log('profile created!!!');
+              })
+              .catch((err) => {
+                console.log('profile error, baby!!!!');
+              })
+          })
+          .then((username) => {
+            this.setState({
+              loggedIn: e.detail.loggedIn,
+              username: username
+            });
+            const loggedOutFaves = e.detail.favoriteList;
+            if (loggedOutFaves.length > 0) {
+              const favePromises = loggedOutFaves.map(favedItem => {
+                return this.updateUserFavorites(favedItem);
+              });
+              Promise.all(favePromises)
+                .then(this.getFavorites)
+                .catch(err => {
+                  console.log(err);
+                });
+            }
+          })
       }
     });
     window.addEventListener("loggedOut", e => {
       this.setState({
         loggedIn: e.detail.loggedIn,
-        username: '',
+        username: "",
         favoritesCarousel: []
-      })
-    });
-    this.updateUserHistory(this.state.productId)
-      .then(this.getCarousels)
-      .then(this.renderCarousels)
-      .then(this.getPrices)
-      .then(this.getReviews)
-      .then(this.getFavorites)
-      .then(this.renderFaveCarousel)
-      .catch(err => {
-        console.log(err);
       });
+    });
+    // this.updateUserHistory(this.state.productId)
+    //   .then(this.getCarousels)
+    //   .then(this.renderCarousels)
+    //   .then(this.getPrices)
+    //   .then(this.getReviews)
+    //   .then(this.getUserFavorites)
+    //   .then(this.renderFaveCarousel)
+    //   .catch(err => {
+    //     console.log(err);
+    //   });
   }
 
   handleClick(e) {
@@ -125,6 +150,23 @@ class App extends React.Component {
     );
   }
 
+  getProfile(profile) {
+    return Axios.get(
+      `http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/faves?profile=${profile}`,
+      { withCredentials: true }
+    );
+  }
+
+  createProfile(username) {
+    return Axios.post(
+      "http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/profiles",
+      {
+        profile: username
+      },
+      { withCredentials: true }
+    );
+  }
+
   updateUserFavorites(username, selectedProductId) {
     return Axios.post(
       "http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/faves",
@@ -138,7 +180,9 @@ class App extends React.Component {
 
   getCarousels() {
     return Axios.get(
-      `http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/carousels?id=${this.state.productId}`,
+      `http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/carousels?id=${
+        this.state.productId
+      }`,
       { withCredentials: true }
     );
   }
@@ -165,6 +209,22 @@ class App extends React.Component {
             }
           });
           prices[carousel] = arr;
+        }
+        if (this.state.loggedIn && this.state.favoritesCarousel.length > 0) {
+          const arr = [];
+          this.state.favoritesCarousel.forEach(item => {
+            const allPriceData = allPrices.data;
+            for (let i = 0; i < allPriceData.length; i++) {
+              let checkItem = allPriceData[i];
+              if (checkItem.SS === Number(item.id)) {
+                arr.push(checkItem.price);
+                if (arr.length === carousel.length) {
+                  break;
+                }
+              }
+            }
+          });
+          prices.favoritesCarousel = arr;
         }
         return prices;
       })
@@ -193,6 +253,14 @@ class App extends React.Component {
           });
           reviews[carousel] = arr;
         }
+        if (this.state.loggedIn && this.state.favoritesCarousel.length > 0) {
+          const arr = [];
+          this.state.favoritesCarousel.forEach(item => {
+            const reviewData = allReviews.data[item.id - 1].reviewStats;
+            arr.push([reviewData.reviewCount, reviewData.averageStars]);
+          });
+          reviews.favoritesCarousel = arr;
+        }
         return reviews;
       })
       .then(applicableReviews => {
@@ -211,17 +279,22 @@ class App extends React.Component {
     });
   }
 
-  renderFaveCarousel(faveCarousel) {
-    this.setState({
-      favoritesCarousel: faveCarousel.data
-    })
+  getFavorites() {
+    const username = this.state.username;
+    if (username) {
+      return Axios.get(
+        `http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/faves?username=${username}`,
+        { withCredentials: true }
+      );
+    }
   }
 
-  getFavorites(username) {
-    return Axios.get(
-      `http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/faves?id=${username}`,
-      { withCredentials: true }
-    );
+  renderFaveCarousel(faveCarousel) {
+    if (faveCarousel) {
+      this.setState({
+        favoritesCarousel: faveCarousel.data
+      });
+    }
   }
 
   updateProductView(newProductId) {
@@ -229,10 +302,10 @@ class App extends React.Component {
     this.updateUserHistory(newProductId)
       .then(this.getCarousels)
       .then(this.renderCarousels)
-      .then(this.getPrices)
-      .then(this.getReviews)
       .then(this.getFavorites)
       .then(this.renderFaveCarousel)
+      .then(this.getPrices)
+      .then(this.getReviews)
       .catch(err => {
         console.log("event listener says: ", err);
       });
@@ -241,12 +314,12 @@ class App extends React.Component {
   render() {
     return (
       <div>
-         {this.state.loggedIn ? (
+        {this.state.loggedIn && this.state.favoritesCarousel.length > 0 ? (
           <Carousel
             name={`${this.state.username}\'s Saved & Faved`}
-            images={this.state.favoritesCarousel.slice(0, 30)}
-            prices={this.state.favoritesCarousel}
-            reviews={this.state.favoritesCarousel}
+            images={this.state.favoritesCarousel.slice(0, 15)}
+            prices={this.state.price.favoritesCarousel}
+            reviews={this.state.price.favoritesCarousel}
             handleClick={this.handleClick}
           />
         ) : null}
@@ -271,7 +344,7 @@ class App extends React.Component {
         {this.state.carousels.prevViewed.length > 0 ? (
           <Carousel
             name={this.state.carouselNames[2]}
-            images={this.state.carousels.prevViewed.slice(0, 30)}
+            images={this.state.carousels.prevViewed.slice(0, 15)}
             prices={this.state.prices.prevViewed}
             reviews={this.state.reviews.prevViewed}
             handleClick={this.handleClick}

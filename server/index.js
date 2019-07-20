@@ -35,11 +35,37 @@ app.post("/users", middleware.itemLookup, async (req, res) => {
   }
 });
 
-app.post("/faves", middleware.itemLookup, async (req, res) => {
+app.get("/profiles", async (req, res) => {
+  let username;
   try {
-    const item = req.body.item;
-    const username = req.body.username;
-    await db.recordFave(username, item.id);
+    let regex = /[\/:. ]+/g;
+    let profile = req.query.profile.replace(regex, '');
+    username = await db.getProfile(profile);
+  } catch {
+    console.log('profile not exist');
+  } finally {
+    res.send(username);
+  }
+});
+
+app.post("/profiles", async (req, res) => {
+  try {
+    let regex = /[\/:. ]+/g;
+    let username = req.body.profile.replace(regex, '');
+    await db.createProfile(username);
+  } catch {
+    console.log('could not create profile');
+  } finally {
+    res.status(201).send();
+  }
+});
+
+app.post("/faves", async (req, res) => {
+  try {
+    let regex = /[\/:. ]+/g;
+    const username = req.body.username.replace(regex, '');
+    const itemId = req.body.itemId;
+    await db.recordFave(username, itemId);
     res.status(201);
   } catch {
     console.log("fave already existed, probably!");
@@ -49,10 +75,13 @@ app.post("/faves", middleware.itemLookup, async (req, res) => {
 });
 
 app.get("/faves", async (req, res) => {
+  let favoritesCarousel;
   try {
-    const username = req.query.id;
-    const faves = await db.getUserFaves(username);
-    const favoritesCarousel = faves || [];
+    let regex = /[\/:. ]+/g;
+    let username = req.query.username.replace(regex, '');
+    const profile = await db.getProfile(username);
+    const faves = await db.getUserFaves(profile);
+    favoritesCarousel = faves || [];
   } catch {
     console.log("no faves?");
   } finally {

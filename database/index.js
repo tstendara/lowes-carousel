@@ -90,10 +90,36 @@ const createUser = async userSesh => {
   }
 };
 
+const createProfile = async username => {
+  const client = await pool.connect()
+  const qText = `INSERT INTO profiles (username) VALUES ($1)`;
+  const qValues = [username];
+  
+  try {
+    const result = await client.query(qText, qValues);
+    return result;
+  } finally {
+    client.release();
+  }
+};
+
 const getUser = async userSesh => {
   const client = await pool.connect()
   const qText = `SELECT * FROM users WHERE session = $1`;
   const qValues = [userSesh];
+  
+  try {
+    const { rows } = await client.query(qText, qValues);
+    return rows[0];
+  } finally {
+    client.release();
+  }
+};
+
+const getProfile = async username => {
+  const client = await pool.connect()
+  const qText = `SELECT * FROM profiles WHERE username = $1`;
+  const qValues = [username];
   
   try {
     const { rows } = await client.query(qText, qValues);
@@ -218,7 +244,9 @@ module.exports = {
   selectSameCategory,
   getAlsoViewedFiller,
   createUser,
+  createProfile,
   getUser,
+  getProfile,
   getUserHistory,
   getUserFaves,
   recordView,
