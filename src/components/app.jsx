@@ -44,6 +44,10 @@ class App extends React.Component {
       const clickedId = e.detail.product_id.toString();
       this.updateProductView(clickedId);
     });
+    window.addEventListener('stars', e => {
+      const id = e.detail.product_id;
+      this.updateProductView(this.state.productId);
+    });
     this.updateUserHistory(this.state.productId)
       .then(this.getCarousels)
       .then(this.renderCarousels)
