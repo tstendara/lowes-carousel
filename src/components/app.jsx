@@ -36,16 +36,12 @@ class App extends React.Component {
     this.handleClick = this.handleClick.bind(this);
     this.scrollToTop = this.scrollToTop.bind(this);
     this.emitProductId = this.emitProductId.bind(this);
-    this.getProfile = this.getProfile.bind(this);
-    this.createProfile = this.createProfile.bind(this);
     this.updateUserHistory = this.updateUserHistory.bind(this);
-    this.updateUserFavorites = this.updateUserFavorites.bind(this);
+    this.getFaveArray = this.getFaveArray.bind(this);
     this.getCarousels = this.getCarousels.bind(this);
     this.getPrices = this.getPrices.bind(this);
     this.getReviews = this.getReviews.bind(this);
-    this.getFavorites = this.getFavorites.bind(this);
     this.renderCarousels = this.renderCarousels.bind(this);
-    this.renderFaveCarousel = this.renderFaveCarousel.bind(this);
     this.updateProductView = this.updateProductView.bind(this);
   }
 
@@ -57,44 +53,21 @@ class App extends React.Component {
     window.addEventListener("stars", e => {
       this.updateProductView(this.state.productId);
     });
-    window.addEventListener("favorite", e => {
-      const favedId = e.detail.product_id.toString();
-      this.state.loggedIn
-        ? this.updateUserFavorites(this.state.username, favedId)
-        : null;
-    });
+    // window.addEventListener("favorite", e => {
+    //   const favedId = e.detail.product_id.toString();
+    //   this.state.loggedIn
+    //     ? this.updateUserFavorites(this.state.username, favedId)
+    //     : null;
+    // });
     window.addEventListener("loggedIn", e => {
       if (e.detail.username) {
-        this.getProfile(e.detail.username)
-          .catch(() => {
-            this.createProfile(e.detail.username)
-              .then(() => {
-                this.setState({
-                  loggedIn: e.detail.loggedIn,
-                  username: e.detail.username
-                });
-                console.log('profile created!!!');
-              })
-              .catch((err) => {
-                console.log('profile error, baby!!!!');
-              })
-          })
-          .then((username) => {
+        this.getFaveArray(e.detail.favoriteList)
+          .then((faveCarousel) => {
             this.setState({
               loggedIn: e.detail.loggedIn,
-              username: username
+              username: e.detail.username,
+              favoritesCarousel: faveCarousel
             });
-            const loggedOutFaves = e.detail.favoriteList;
-            if (loggedOutFaves.length > 0) {
-              const favePromises = loggedOutFaves.map(favedItem => {
-                return this.updateUserFavorites(favedItem);
-              });
-              Promise.all(favePromises)
-                .then(this.getFavorites)
-                .catch(err => {
-                  console.log(err);
-                });
-            }
           })
       }
     });
@@ -116,6 +89,7 @@ class App extends React.Component {
     //     console.log(err);
     //   });
   }
+  
 
   handleClick(e) {
     const clickedId = Number(
@@ -150,38 +124,20 @@ class App extends React.Component {
     );
   }
 
-  getProfile(profile) {
-    return Axios.get(
-      `http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/faves?profile=${profile}`,
-      { withCredentials: true }
-    );
-  }
-
-  createProfile(username) {
-    return Axios.post(
-      "http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/profiles",
-      {
-        profile: username
-      },
-      { withCredentials: true }
-    );
-  }
-
-  updateUserFavorites(username, selectedProductId) {
-    return Axios.post(
-      "http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/faves",
-      {
-        username: username,
-        itemId: selectedProductId
-      },
-      { withCredentials: true }
-    );
-  }
-
   getCarousels() {
     return Axios.get(
       `http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/carousels?id=${
         this.state.productId
+      }`,
+      { withCredentials: true }
+    );
+  }
+
+  getFaveArray(itemIdArray) {
+    const idArr = itemIdArray.join('+');
+    return Axios.get(
+      `http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/faves?id=${
+        idArr
       }`,
       { withCredentials: true }
     );
@@ -277,24 +233,6 @@ class App extends React.Component {
     this.setState({
       carousels: newCarousels.data
     });
-  }
-
-  getFavorites() {
-    const username = this.state.username;
-    if (username) {
-      return Axios.get(
-        `http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/faves?username=${username}`,
-        { withCredentials: true }
-      );
-    }
-  }
-
-  renderFaveCarousel(faveCarousel) {
-    if (faveCarousel) {
-      this.setState({
-        favoritesCarousel: faveCarousel.data
-      });
-    }
   }
 
   updateProductView(newProductId) {

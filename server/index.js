@@ -35,59 +35,59 @@ app.post("/users", middleware.itemLookup, async (req, res) => {
   }
 });
 
-app.get("/profiles", async (req, res) => {
-  let username;
-  try {
-    let regex = /[\/:. ]+/g;
-    let profile = req.query.profile.replace(regex, '');
-    username = await db.getProfile(profile);
-  } catch {
-    console.log('profile not exist');
-  } finally {
-    res.send(username);
-  }
-});
+// app.get("/profiles", async (req, res) => {
+//   let username;
+//   try {
+//     let regex = /[\/:. ]+/g;
+//     let profile = req.query.profile.replace(regex, '');
+//     username = await db.getProfile(profile);
+//   } catch {
+//     console.log('profile not exist');
+//   } finally {
+//     res.send(username);
+//   }
+// });
 
-app.post("/profiles", async (req, res) => {
-  try {
-    let regex = /[\/:. ]+/g;
-    let username = req.body.profile.replace(regex, '');
-    await db.createProfile(username);
-  } catch {
-    console.log('could not create profile');
-  } finally {
-    res.status(201).send();
-  }
-});
+// app.post("/profiles", async (req, res) => {
+//   try {
+//     let regex = /[\/:. ]+/g;
+//     let username = req.body.profile.replace(regex, '');
+//     await db.createProfile(username);
+//   } catch {
+//     console.log('could not create profile');
+//   } finally {
+//     res.status(201).send();
+//   }
+// });
 
-app.post("/faves", async (req, res) => {
-  try {
-    let regex = /[\/:. ]+/g;
-    const username = req.body.username.replace(regex, '');
-    const itemId = req.body.itemId;
-    await db.recordFave(username, itemId);
-    res.status(201);
-  } catch {
-    console.log("fave already existed, probably!");
-  } finally {
-    res.send();
-  }
-});
+// app.post("/faves", async (req, res) => {
+//   try {
+//     let regex = /[\/:. ]+/g;
+//     const username = req.body.username.replace(regex, '');
+//     const itemId = req.body.itemId;
+//     await db.recordFave(username, itemId);
+//     res.status(201);
+//   } catch {
+//     console.log("fave already existed, probably!");
+//   } finally {
+//     res.send();
+//   }
+// });
 
-app.get("/faves", async (req, res) => {
-  let favoritesCarousel;
-  try {
-    let regex = /[\/:. ]+/g;
-    let username = req.query.username.replace(regex, '');
-    const profile = await db.getProfile(username);
-    const faves = await db.getUserFaves(profile);
-    favoritesCarousel = faves || [];
-  } catch {
-    console.log("no faves?");
-  } finally {
-    res.send(favoritesCarousel);
-  }
-});
+// app.get("/faves", async (req, res) => {
+//   let favoritesCarousel;
+//   try {
+//     let regex = /[\/:. ]+/g;
+//     let username = req.query.username.replace(regex, '');
+//     const profile = await db.getProfile(username);
+//     const faves = await db.getUserFaves(profile);
+//     favoritesCarousel = faves || [];
+//   } catch {
+//     console.log("no faves?");
+//   } finally {
+//     res.send(favoritesCarousel);
+//   }
+// });
 
 app.get("/carousels", middleware.itemLookup, async (req, res) => {
   const item = req.body.item;
@@ -107,6 +107,21 @@ app.get("/carousels", middleware.itemLookup, async (req, res) => {
 
   res.send(carousels);
 });
+
+app.get("/faves", async (req, res) => {
+  console.log(req.query.id);
+
+  const itemIds = req.query.id.split(' ')
+  const faves = [];
+  await itemIds.map(async (id) => {
+    const item = await db.selectOneById(id);
+    faves.push(item);
+    console.log(item);
+  })
+  console.log('item ids: ', itemIds);
+  console.log(faves);
+  res.send(faves)
+})
 
 app.listen(PORT, () => {
   console.log(`what up, i'm on ${PORT}, baby`);
