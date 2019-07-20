@@ -35,6 +35,25 @@ app.post("/users", middleware.itemLookup, async (req, res) => {
   }
 });
 
+app.post("/faves", middleware.itemLookup, async (req, res) => {
+  try {
+    const item = req.body.item;
+    const username = req.body.username;
+    await db.recordFave(username, item.id)
+    res.status(201);
+  } catch {
+    console.log('fave already existed, probably!');
+  } finally {
+    res.send();
+  }
+})
+
+app.get("/faves", async (req, res) => {
+  const username = req.query.id;
+  const faves = await db.getUserFaves(username);
+  res.send(faves)
+});
+
 app.get("/carousels", middleware.itemLookup, async (req, res) => {
   const item = req.body.item;
   const carousels = {};

@@ -116,6 +116,19 @@ const recordView = async (userId, itemId) => {
   }
 };
 
+const recordFave = async (username, itemId) => {
+  const client = await pool.connect()
+  const qText = `INSERT INTO userFaves (profileId, imageId) VALUES ($1, $2)`;
+  const qValues = [username, itemId];
+  
+  try {
+    const result = await client.query(qText, qValues);
+    return result;
+  } finally {
+    client.release();
+  }
+};
+
 const getUserHistory = async (userSesh, itemId) => {
   const client = await pool.connect()
   const qText = `SELECT images.id, images.name, images.src, images.alt FROM images, userHistory, users 
@@ -126,6 +139,21 @@ const getUserHistory = async (userSesh, itemId) => {
   try {
     const { rows } = await client.query(qText, qValues);
     return rows;
+  } finally {
+    client.release();
+  }
+};
+
+const getUserFaves = async username => {
+  const client = await pool.connect()
+  const qText = `SELECT images.id, images.name, images.src, images.alt FROM images, userFaves, users 
+  WHERE images.id = userFaves.imageId AND profiles.id = userFaves.profileId AND profiles.username = $1
+  ORDER BY userHistory.id DESC;`;
+  const qValues = [username];
+  
+  try {
+    const { rows } = await client.query(qText, qValues);
+    return rows[0];
   } finally {
     client.release();
   }
@@ -192,7 +220,9 @@ module.exports = {
   createUser,
   getUser,
   getUserHistory,
-  recordView
+  getUserFaves,
+  recordView,
+  recordFave
 };
 
 // pool single query method below for likely refactor ---

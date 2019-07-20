@@ -27,15 +27,19 @@ class App extends React.Component {
         related: [],
         prevViewed: []
       },
-      loggedIn: false
+      loggedIn: false,
+      username: '',
+      favoritesCarousel: [] 
     };
     this.handleClick = this.handleClick.bind(this);
     this.scrollToTop = this.scrollToTop.bind(this);
     this.emitProductId = this.emitProductId.bind(this);
     this.updateUserHistory = this.updateUserHistory.bind(this);
+    this.updateUserFavorites = this.updateUserFavorites.bind(this);
     this.getCarousels = this.getCarousels.bind(this);
     this.getPrices = this.getPrices.bind(this);
     this.getReviews = this.getReviews.bind(this);
+    this.getFavorites = this.getFavorites.bind(this);
     this.renderCarousels = this.renderCarousels.bind(this);
     this.updateProductView = this.updateProductView.bind(this);
   }
@@ -48,11 +52,41 @@ class App extends React.Component {
     window.addEventListener("stars", e => {
       this.updateProductView(this.state.productId);
     });
+    window.addEventListener("favorite", e => {
+      const favedId = e.detail.product_id.toString();
+      this.state.loggedIn ? 
+        this.updateUserFavorites(this.state.username, favedId)
+        : null
+    });
+    window.addEventListener("loggedIn", e => {
+      this.setState({
+        loggedIn: e.detail.loggedIn,
+        username: e.detail.username
+      })
+      if (loggedOutFaves.length > 0) {
+        const loggedOutFaves = e.detail.favoriteList;
+        const favePromises = loggedOutFaves.map((favedItem) => {
+          return this.updateUserFavorites(favedItem);
+        }); 
+        Promise.all(favePromises)
+          .then(this.getFavorites(e.detail.username))
+          .catch(err => {console.log(err)});
+      }
+    });
+    window.addEventListener("loggedOut", e => {
+      this.setState({
+        loggedIn: e.detail.loggedIn,
+        username: '',
+        favoritesCarousel: []
+      })
+    });
     this.updateUserHistory(this.state.productId)
       .then(this.getCarousels)
       .then(this.renderCarousels)
       .then(this.getPrices)
       .then(this.getReviews)
+      .then(this.getFavorites)
+      .then(this.renderFaveCarousel)
       .catch(err => {
         console.log(err);
       });
@@ -70,7 +104,7 @@ class App extends React.Component {
     window.scroll({
       top: 0,
       left: 0,
-      behavior: "smooth"
+      behavior: "auto"
     });
   }
 
@@ -85,6 +119,17 @@ class App extends React.Component {
     return Axios.post(
       "http://localhost:3000/users",
       {
+        itemId: selectedProductId
+      },
+      { withCredentials: true }
+    );
+  }
+
+  updateUserFavorites(username, selectedProductId) {
+    return Axios.post(
+      "http://localhost:3000/faves",
+      {
+        username: username,
         itemId: selectedProductId
       },
       { withCredentials: true }
@@ -166,6 +211,19 @@ class App extends React.Component {
     });
   }
 
+  renderFaveCarousel(faveCarousel) {
+    this.setState({
+      favoritesCarousel: faveCarousel.data
+    })
+  }
+
+  getFavorites(username) {
+    return Axios.get(
+      `http://localhost:3000/faves?id=${username}`,
+      { withCredentials: true }
+    );
+  }
+
   updateProductView(newProductId) {
     this.setState({ productId: newProductId });
     this.updateUserHistory(newProductId)
@@ -173,6 +231,8 @@ class App extends React.Component {
       .then(this.renderCarousels)
       .then(this.getPrices)
       .then(this.getReviews)
+      .then(this.getFavorites)
+      .then(this.renderFaveCarousel)
       .catch(err => {
         console.log("event listener says: ", err);
       });
@@ -181,6 +241,15 @@ class App extends React.Component {
   render() {
     return (
       <div>
+         {this.state.loggedIn ? (
+          <Carousel
+            name={`${this.state.username}\'s Saved & Faved`}
+            images={this.state.favoritesCarousel.slice(0, 30)}
+            prices={this.state.favoritesCarousel}
+            reviews={this.state.favoritesCarousel}
+            handleClick={this.handleClick}
+          />
+        ) : null}
         {this.state.carousels.related ? (
           <Carousel
             name={this.state.carouselNames[0]}
