@@ -1,5 +1,4 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import Carousel from "./carousel.jsx";
 import Axios from "axios";
 
@@ -46,7 +45,6 @@ class App extends React.Component {
       this.updateProductView(clickedId);
     });
     window.addEventListener('stars', e => {
-      const id = e.detail.product_id;
       this.updateProductView(this.state.productId);
     });
     this.updateUserHistory(this.state.productId)
@@ -84,7 +82,7 @@ class App extends React.Component {
 
   updateUserHistory(selectedProductId) {
     return Axios.post(
-      "http://localhost:3000/users",
+      "http://lhttp://fec-proxy.us-east-1.elasticbeanstalk.com/users",
       {
         itemId: selectedProductId
       },
@@ -94,7 +92,7 @@ class App extends React.Component {
 
   getCarousels() {
     return Axios.get(
-      `http://localhost:3000/carousels?id=${
+      `http://http://fec-proxy.us-east-1.elasticbeanstalk.com/carousels?id=${
         this.state.productId
       }`,
       { withCredentials: true }
