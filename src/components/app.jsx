@@ -117,7 +117,7 @@ class App extends React.Component {
 
   updateUserHistory(selectedProductId) {
     return Axios.post(
-      "http://localhost:3000/users",
+      "http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/users",
       {
         itemId: selectedProductId
       },
@@ -127,7 +127,7 @@ class App extends React.Component {
 
   updateUserFavorites(username, selectedProductId) {
     return Axios.post(
-      "http://localhost:3000/faves",
+      "http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/faves",
       {
         username: username,
         itemId: selectedProductId
@@ -138,7 +138,7 @@ class App extends React.Component {
 
   getCarousels() {
     return Axios.get(
-      `http://localhost:3000/carousels?id=${this.state.productId}`,
+      `http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/carousels?id=${this.state.productId}`,
       { withCredentials: true }
     );
   }
@@ -219,7 +219,7 @@ class App extends React.Component {
 
   getFavorites(username) {
     return Axios.get(
-      `http://localhost:3000/faves?id=${username}`,
+      `http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/faves?id=${username}`,
       { withCredentials: true }
     );
   }
@@ -250,7 +250,7 @@ class App extends React.Component {
             handleClick={this.handleClick}
           />
         ) : null}
-        {this.state.carousels.related ? (
+        {this.state.carousels.alsoViewed.length > 0 ? (
           <Carousel
             name={this.state.carouselNames[0]}
             images={this.state.carousels.alsoViewed.slice(0, 15)}
@@ -259,7 +259,7 @@ class App extends React.Component {
             handleClick={this.handleClick}
           />
         ) : null}
-        {this.state.carousels.related ? (
+        {this.state.carousels.related.length > 0 ? (
           <Carousel
             name={this.state.carouselNames[1]}
             images={this.state.carousels.related.slice(0, 15)}
@@ -268,7 +268,7 @@ class App extends React.Component {
             handleClick={this.handleClick}
           />
         ) : null}
-        {this.state.carousels.preViewed ? (
+        {this.state.carousels.prevViewed.length > 0 ? (
           <Carousel
             name={this.state.carouselNames[2]}
             images={this.state.carousels.prevViewed.slice(0, 30)}

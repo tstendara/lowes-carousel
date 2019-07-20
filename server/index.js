@@ -21,15 +21,15 @@ app.post("/users", middleware.itemLookup, async (req, res) => {
     const item = req.body.item;
     let sessionId = req.cookies.user_session;
     if (!req.cookies.user_session) {
-        sessionId = helpers.randomStringifiedNumberOfLength(8);
-        await db.createUser(sessionId);
-        res.cookie("user_session", sessionId);
-      }
+      sessionId = helpers.randomStringifiedNumberOfLength(8);
+      await db.createUser(sessionId);
+      res.cookie("user_session", sessionId);
+    }
     const user = await db.getUser(sessionId);
     await db.recordView(user.id, item.id);
     res.status(201);
-  } catch(err) {
-    console.log('duplicate userHist insertion attempted, probably');
+  } catch (err) {
+    console.log("duplicate userHist insertion attempted, probably");
   } finally {
     res.send();
   }
@@ -39,19 +39,25 @@ app.post("/faves", middleware.itemLookup, async (req, res) => {
   try {
     const item = req.body.item;
     const username = req.body.username;
-    await db.recordFave(username, item.id)
+    await db.recordFave(username, item.id);
     res.status(201);
   } catch {
-    console.log('fave already existed, probably!');
+    console.log("fave already existed, probably!");
   } finally {
     res.send();
   }
-})
+});
 
 app.get("/faves", async (req, res) => {
-  const username = req.query.id;
-  const faves = await db.getUserFaves(username);
-  res.send(faves)
+  try {
+    const username = req.query.id;
+    const faves = await db.getUserFaves(username);
+    const favoritesCarousel = faves || [];
+  } catch {
+    console.log("no faves?");
+  } finally {
+    res.send(favoritesCarousel);
+  }
 });
 
 app.get("/carousels", middleware.itemLookup, async (req, res) => {
@@ -61,8 +67,14 @@ app.get("/carousels", middleware.itemLookup, async (req, res) => {
   carousels.related = await db.selectRelated(item);
   const sameCategory = await db.selectSameCategory(item);
   const alsoViewedFiller = await db.getAlsoViewedFiller(item.id);
-  carousels.alsoViewed = helpers.concatOnlyUnique(sameCategory, alsoViewedFiller);
-  carousels.prevViewed = await db.getUserHistory(req.cookies.user_session, item.id);
+  carousels.alsoViewed = helpers.concatOnlyUnique(
+    sameCategory,
+    alsoViewedFiller
+  );
+  carousels.prevViewed = await db.getUserHistory(
+    req.cookies.user_session,
+    item.id
+  );
 
   res.send(carousels);
 });
