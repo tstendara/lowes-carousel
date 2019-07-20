@@ -26,7 +26,8 @@ class App extends React.Component {
         alsoViewed: [],
         related: [],
         prevViewed: []
-      }
+      },
+      loggedIn: false
     };
     this.handleClick = this.handleClick.bind(this);
     this.scrollToTop = this.scrollToTop.bind(this);
@@ -44,7 +45,7 @@ class App extends React.Component {
       const clickedId = e.detail.product_id.toString();
       this.updateProductView(clickedId);
     });
-    window.addEventListener('stars', e => {
+    window.addEventListener("stars", e => {
       this.updateProductView(this.state.productId);
     });
     this.updateUserHistory(this.state.productId)
@@ -69,7 +70,7 @@ class App extends React.Component {
     window.scroll({
       top: 0,
       left: 0,
-      behavior: 'auto'
+      behavior: "smooth"
     });
   }
 
@@ -82,7 +83,7 @@ class App extends React.Component {
 
   updateUserHistory(selectedProductId) {
     return Axios.post(
-      "http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/users",
+      "http://localhost:3000/users",
       {
         itemId: selectedProductId
       },
@@ -92,9 +93,7 @@ class App extends React.Component {
 
   getCarousels() {
     return Axios.get(
-      `http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/carousels?id=${
-        this.state.productId
-      }`,
+      `http://localhost:3000/carousels?id=${this.state.productId}`,
       { withCredentials: true }
     );
   }
@@ -182,27 +181,33 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <Carousel
-          name={this.state.carouselNames[0]}
-          images={this.state.carousels.alsoViewed.slice(0, 15)}
-          prices={this.state.prices.alsoViewed}
-          reviews={this.state.reviews.alsoViewed}
-          handleClick={this.handleClick}
-        />
-        <Carousel
-          name={this.state.carouselNames[1]}
-          images={this.state.carousels.related.slice(0, 15)}
-          prices={this.state.prices.related}
-          reviews={this.state.reviews.related}
-          handleClick={this.handleClick}
-        />
-        <Carousel
-          name={this.state.carouselNames[2]}
-          images={this.state.carousels.prevViewed.slice(0, 30)}
-          prices={this.state.prices.prevViewed}
-          reviews={this.state.reviews.prevViewed}
-          handleClick={this.handleClick}
-        />
+        {this.state.carousels.related ? (
+          <Carousel
+            name={this.state.carouselNames[0]}
+            images={this.state.carousels.alsoViewed.slice(0, 15)}
+            prices={this.state.prices.alsoViewed}
+            reviews={this.state.reviews.alsoViewed}
+            handleClick={this.handleClick}
+          />
+        ) : null}
+        {this.state.carousels.related ? (
+          <Carousel
+            name={this.state.carouselNames[1]}
+            images={this.state.carousels.related.slice(0, 15)}
+            prices={this.state.prices.related}
+            reviews={this.state.reviews.related}
+            handleClick={this.handleClick}
+          />
+        ) : null}
+        {this.state.carousels.preViewed ? (
+          <Carousel
+            name={this.state.carouselNames[2]}
+            images={this.state.carousels.prevViewed.slice(0, 30)}
+            prices={this.state.prices.prevViewed}
+            reviews={this.state.reviews.prevViewed}
+            handleClick={this.handleClick}
+          />
+        ) : null}
       </div>
     );
   }
