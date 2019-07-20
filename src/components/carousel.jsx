@@ -6,8 +6,26 @@ import "../style/slick.css";
 import "../style/slick-theme.css";
 import "../style/carousel.css";
 
-const Carousel = props => {
-  var settings = {
+class Carousel extends React.Component {
+  constructor(props) {
+    super(props);
+    this.slider = React.createRef();
+    this.resetCarousels = this.resetCarousels.bind(this);
+  }
+
+  componentDidMount() {
+    window.addEventListener("product", e => {
+      const clickedId = e.detail.product_id.toString();
+      this.resetCarousels();
+    });
+  }
+
+  resetCarousels() {
+    this.slider.current.slickGoTo(0);
+  }
+
+  render() {
+  const settings = {
     dots: true,
     infinite: false,
     speed: 600,
@@ -52,9 +70,9 @@ const Carousel = props => {
 
   return (
     <div className={styles["total-carousel-container"]}>
-      <h2>{props.name}</h2>
-      <Slider {...settings}>
-        {props.images.map((image, index) => {
+      <h2>{this.props.name}</h2>
+      <Slider ref={this.slider} {...settings}>
+        {this.props.images.map((image, index) => {
           {
             if (image.id.toString().length === 1) {
               image.id = "00" + image.id;
@@ -65,11 +83,11 @@ const Carousel = props => {
           return (
             <Slide
               image={image}
-              reviews={props.reviews[index] || [0,0]}
-              price={props.prices[index] || 0}
+              reviews={this.props.reviews[index] || [0,0]}
+              price={this.props.prices[index] || 0}
               key={`item${image.id}`}
               sale={`i'm on sale babyyyyy`}
-              handleClick={props.handleClick}
+              handleClick={this.props.handleClick}
             />
           );
         })}
@@ -77,5 +95,7 @@ const Carousel = props => {
     </div>
   );
 };
+
+}
 
 export default Carousel;
