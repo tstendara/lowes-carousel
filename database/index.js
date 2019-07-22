@@ -133,8 +133,8 @@ const getUserHistory = async (userSesh, itemId) => {
 
 const getAlsoViewedFiller = async itemId => {
   const client = await pool.connect()
-  const qText = `SELECT DISTINCT images.id, images.name, images.src, images.alt FROM images, userHistory  
-  WHERE images.id = userHistory.imageId AND images.id != $1 limit 15;`;
+  const qText = `SELECT DISTINCT images.id, images.name, images.src, images.alt FROM images, userHistory, users  
+  WHERE images.id = userHistory.imageId AND images.id != $1 AND users.id = userHistory.userId AND random() <0.15 limit 15;`;
   const qValues = [itemId];
   
   try {
