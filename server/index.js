@@ -113,13 +113,13 @@ app.get("/faves", async (req, res) => {
 
   const itemIds = req.query.id.split(' ')
   const faves = [];
-  await itemIds.map(async (id) => {
-    const item = await db.selectOneById(id);
+  for (let i = 0; i < itemIds.length; i++) {
+    const item = await db.selectOneById(itemId[i]);
     faves.push(item);
-    console.log(item);
-  })
+    console.log("faves during loop: ", faves);
+  }
   console.log('item ids: ', itemIds);
-  console.log(faves);
+  console.log('faves after loop: ', faves);
   res.send(faves)
 })
 

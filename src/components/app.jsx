@@ -109,24 +109,27 @@ class App extends React.Component {
 
   emitProductId(productId) {
     let product = new CustomEvent("product", {
-      detail: { product_id: productId }
+      detail: { product_id: Number(productId) }
     });
     window.dispatchEvent(product);
   }
 
   updateUserHistory(selectedProductId) {
-    return Axios.post(
-      "http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/users",
+    return (selectedProductId) ? 
+     Axios.post(
+      "http://localhost:3000/users",
       {
         itemId: selectedProductId
       },
       { withCredentials: true }
-    );
+      ) : new Promise((res, rej) => {
+        setTimeout(()=>{res()}, 0);
+      })
   }
 
   getCarousels() {
     return Axios.get(
-      `http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/carousels?id=${
+      `http://localhost:3000/carousels?id=${
         this.state.productId
       }`,
       { withCredentials: true }
@@ -136,7 +139,7 @@ class App extends React.Component {
   getFaveArray(itemIdArray) {
     const idArr = itemIdArray.join('+');
     return Axios.get(
-      `http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/faves?id=${
+      `http://localhost:3000/faves?id=${
         idArr
       }`,
       { withCredentials: true }
