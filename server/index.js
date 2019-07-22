@@ -21,7 +21,7 @@ app.post("/users", middleware.itemLookup, async (req, res) => {
     const item = req.body.item;
     let sessionId = req.cookies.user_session;
     if (!req.cookies.user_session) {
-      sessionId = helpers.randomStringifiedNumberOfLength(8);
+      sessionId = helpers.randomStringifiedNumberOfLength(32);
       await db.createUser(sessionId);
       res.cookie("user_session", sessionId);
     }

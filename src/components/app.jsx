@@ -6,7 +6,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      productId: "1",
+      productId: "0",
       carouselNames: [
         "Customers Also Viewed",
         "Related Items",
@@ -81,9 +81,9 @@ class App extends React.Component {
   }
 
   updateUserHistory(selectedProductId) {
-    return selectedProductId
+    return Number(selectedProductId) > 0 && Number(selectedProductId) < 101
       ? Axios.post(
-          "http://localhost:3000/users",
+          "http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/users",
           {
             itemId: selectedProductId
           },
@@ -97,10 +97,17 @@ class App extends React.Component {
   }
 
   getCarousels() {
-    return Axios.get(
-      `http://localhost:3000/carousels?id=${this.state.productId}`,
-      { withCredentials: true }
-    );
+    return Number(this.state.productId) > 0 &&
+      Number(this.state.productId) < 101
+      ? Axios.get(
+          `http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/carousels?id=${this.state.productId}`,
+          { withCredentials: true }
+        )
+      : new Promise((res, rej) => {
+          setTimeout(() => {
+            res();
+          }, 0);
+        });
   }
 
   getPrices() {
@@ -166,9 +173,10 @@ class App extends React.Component {
   }
 
   renderCarousels(newCarousels) {
+    newCarousels ?
     this.setState({
       carousels: newCarousels.data
-    });
+    }) : null;
   }
 
   updateProductView(newProductId) {
