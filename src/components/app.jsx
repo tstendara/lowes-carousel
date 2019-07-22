@@ -6,7 +6,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      productId: "",
+      productId: "1",
       carouselNames: [
         "Customers Also Viewed",
         "Related Items",
@@ -20,24 +20,18 @@ class App extends React.Component {
       reviews: {
         alsoViewed: [],
         related: [],
-        prevViewed: [],
-        favoritesCarousel: []
+        prevViewed: []
       },
       prices: {
         alsoViewed: [],
         related: [],
-        prevViewed: [],
-        favoritesCarousel: []
-      },
-      loggedIn: false,
-      username: "",
-      favoritesCarousel: []
+        prevViewed: []
+      }
     };
     this.handleClick = this.handleClick.bind(this);
     this.scrollToTop = this.scrollToTop.bind(this);
     this.emitProductId = this.emitProductId.bind(this);
     this.updateUserHistory = this.updateUserHistory.bind(this);
-    this.getFaveArray = this.getFaveArray.bind(this);
     this.getCarousels = this.getCarousels.bind(this);
     this.getPrices = this.getPrices.bind(this);
     this.getReviews = this.getReviews.bind(this);
@@ -53,43 +47,15 @@ class App extends React.Component {
     window.addEventListener("stars", e => {
       this.updateProductView(this.state.productId);
     });
-    // window.addEventListener("favorite", e => {
-    //   const favedId = e.detail.product_id.toString();
-    //   this.state.loggedIn
-    //     ? this.updateUserFavorites(this.state.username, favedId)
-    //     : null;
-    // });
-    window.addEventListener("loggedIn", e => {
-      if (e.detail.username) {
-        this.getFaveArray(e.detail.favoriteList)
-          .then((faveCarousel) => {
-            this.setState({
-              loggedIn: e.detail.loggedIn,
-              username: e.detail.username,
-              favoritesCarousel: faveCarousel
-            });
-          })
-      }
-    });
-    window.addEventListener("loggedOut", e => {
-      this.setState({
-        loggedIn: e.detail.loggedIn,
-        username: "",
-        favoritesCarousel: []
+    this.updateUserHistory(this.state.productId)
+      .then(this.getCarousels)
+      .then(this.renderCarousels)
+      .then(this.getPrices)
+      .then(this.getReviews)
+      .catch(err => {
+        console.log(err);
       });
-    });
-    // this.updateUserHistory(this.state.productId)
-    //   .then(this.getCarousels)
-    //   .then(this.renderCarousels)
-    //   .then(this.getPrices)
-    //   .then(this.getReviews)
-    //   .then(this.getUserFavorites)
-    //   .then(this.renderFaveCarousel)
-    //   .catch(err => {
-    //     console.log(err);
-    //   });
   }
-  
 
   handleClick(e) {
     const clickedId = Number(
@@ -115,33 +81,24 @@ class App extends React.Component {
   }
 
   updateUserHistory(selectedProductId) {
-    return (selectedProductId) ? 
-     Axios.post(
-      "http://localhost:3000/users",
-      {
-        itemId: selectedProductId
-      },
-      { withCredentials: true }
-      ) : new Promise((res, rej) => {
-        setTimeout(()=>{res()}, 0);
-      })
+    return selectedProductId
+      ? Axios.post(
+          "http://localhost:3000/users",
+          {
+            itemId: selectedProductId
+          },
+          { withCredentials: true }
+        )
+      : new Promise((res, rej) => {
+          setTimeout(() => {
+            res();
+          }, 0);
+        });
   }
 
   getCarousels() {
     return Axios.get(
-      `http://localhost:3000/carousels?id=${
-        this.state.productId
-      }`,
-      { withCredentials: true }
-    );
-  }
-
-  getFaveArray(itemIdArray) {
-    const idArr = itemIdArray.join('+');
-    return Axios.get(
-      `http://localhost:3000/faves?id=${
-        idArr
-      }`,
+      `http://localhost:3000/carousels?id=${this.state.productId}`,
       { withCredentials: true }
     );
   }
@@ -168,22 +125,6 @@ class App extends React.Component {
             }
           });
           prices[carousel] = arr;
-        }
-        if (this.state.loggedIn && this.state.favoritesCarousel.length > 0) {
-          const arr = [];
-          this.state.favoritesCarousel.forEach(item => {
-            const allPriceData = allPrices.data;
-            for (let i = 0; i < allPriceData.length; i++) {
-              let checkItem = allPriceData[i];
-              if (checkItem.SS === Number(item.id)) {
-                arr.push(checkItem.price);
-                if (arr.length === carousel.length) {
-                  break;
-                }
-              }
-            }
-          });
-          prices.favoritesCarousel = arr;
         }
         return prices;
       })
@@ -212,14 +153,6 @@ class App extends React.Component {
           });
           reviews[carousel] = arr;
         }
-        if (this.state.loggedIn && this.state.favoritesCarousel.length > 0) {
-          const arr = [];
-          this.state.favoritesCarousel.forEach(item => {
-            const reviewData = allReviews.data[item.id - 1].reviewStats;
-            arr.push([reviewData.reviewCount, reviewData.averageStars]);
-          });
-          reviews.favoritesCarousel = arr;
-        }
         return reviews;
       })
       .then(applicableReviews => {
@@ -243,8 +176,6 @@ class App extends React.Component {
     this.updateUserHistory(newProductId)
       .then(this.getCarousels)
       .then(this.renderCarousels)
-      .then(this.getFavorites)
-      .then(this.renderFaveCarousel)
       .then(this.getPrices)
       .then(this.getReviews)
       .catch(err => {
@@ -255,15 +186,6 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        {this.state.loggedIn && this.state.favoritesCarousel.length > 0 ? (
-          <Carousel
-            name={`${this.state.username}\'s Saved & Faved`}
-            images={this.state.favoritesCarousel.slice(0, 15)}
-            prices={this.state.price.favoritesCarousel}
-            reviews={this.state.price.favoritesCarousel}
-            handleClick={this.handleClick}
-          />
-        ) : null}
         {this.state.carousels.alsoViewed.length > 0 ? (
           <Carousel
             name={this.state.carouselNames[0]}
