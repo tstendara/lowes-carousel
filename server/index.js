@@ -1,10 +1,10 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-const db = require("../database/index.js");
+const db = require("../database/index.js"); //changed routing to new index
 const middleware = require("./middleware.js");
 const helpers = require("./helpers.js");
-
+const test = require('./dataGenerator.js');
 const PORT = 3000;
 
 const app = express();
@@ -15,6 +15,11 @@ app.use(cookieParser());
 app.use(cors(middleware.corsOptions));
 
 app.use(express.static("dist"));
+
+app.get("/test", (req, res) => {
+  const items = test.generate();
+  res.send(items);
+})
 
 app.post("/users", middleware.itemLookup, async (req, res) => {
   try {
@@ -38,6 +43,7 @@ app.post("/users", middleware.itemLookup, async (req, res) => {
 app.get("/carousels", middleware.itemLookup, async (req, res) => {
   const item = req.body.item;
   const carousels = {};
+
 
   carousels.related = await db.selectRelated(item);
   const sameCategory = await db.selectSameCategory(item);
