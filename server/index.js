@@ -20,53 +20,88 @@ app.use(express.static("dist"));
 app.get("/test", (req, res) => {
   
   const data = {};
+  let count = 0; 
   let done = false;
-  let count = 0; //need to stop after 100
-  let interval = 0; //each time the for loop is going thru 
 
-  
-  const helper = () => {
-    //if count === 1, then itll start on 101,000
-    while (!done){
+  let start = 1;
+  let end = 1000;
 
-      let end = interval * 10;
-      let start = end - 10;
-      if(interval === 0){ // setting up for first run of each interval
-        end = 10;
-        start = 1
-      }
-      if(count > 0){
-        console.log(count, "counter");
-        const index = count * 10; //set each count = 100,000 for a reference on where to start
-        start = index;
-        end = index + 10;
-      }
-      console.log(interval, "counter", start, "start", end, "end");
-      for(i=start; i <= end; i++){
-          let alt = faker.commerce.productName(); //same as name
-          let src = faker.image.avatar();  //also name of obj as string ex: "0"{"alt": "name of product"}
-          let category = faker.commerce.product();
-          let subCategory = faker.commerce.department();
-          console.log(interval, "counter");
-          data[i] = {"alt": alt, "src": src, "id": i, "category": category, "subCategory": subCategory, "name": alt}
-      }
-      interval ++;
-      if(interval === 10){
-        done = true;
-      }
+  const helper = (start, end) => {
+
+    for(i=start; i <= end; i++){
+      let alt = faker.commerce.productName(); //same as name
+      let src = faker.image.avatar();  //also name of obj as string ex: "0"{"alt": "name of product"}
+      let category = faker.commerce.product();
+      let subCategory = faker.commerce.department();
+      data[i] = {"alt": alt, "src": src, "id": i, "category": category, "subCategory": subCategory, "name": alt}
     }
-  } 
-
-  if(!done){
-    helper();
+    count ++;  //will get first 1000 items
+    if(count === 2){
+      done = true;
+    }
+    while(!done){
+      console.log(data, "FIRST 1000 ITEMS @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"); //will query data base here ater every 10,000
+      helper(start += 1001, end += 1000);
+    }
   }
 
-  count ++;
-  if(count !== 5){
-    done = false;
-    interval = 0;
-    helper();
-    }
+  if(!done){ //runs once
+    helper(start, end);
+  }
+
+
+  const items = data;
+  res.send(items);
+
+
+
+
+  // const helper = (start, end) => {
+  //   //if count === 1, then itll start on 101,000
+  //     console.log(count, "counter");
+  //   if(count !== 0){
+  //       start = count * 100 +1;
+  //       end = start + 9;
+  //     }
+
+  //     if(count !== 0 && interval !== 0){
+  //       start = start +10;
+  //       end = start + 10;
+  //     }
+
+  //     console.log(interval, "interval", start, "start", end, "end");
+  //     for(i=start; i <= end; i++){
+  //         let alt = faker.commerce.productName(); //same as name
+  //         let src = faker.image.avatar();  //also name of obj as string ex: "0"{"alt": "name of product"}
+  //         let category = faker.commerce.product();
+  //         let subCategory = faker.commerce.department();
+  //         data[i] = {"alt": alt, "src": src, "id": i, "category": category, "subCategory": subCategory, "name": alt}
+  //     }
+  //     console.log(interval, "interval");
+  //     if(count === 3){
+  //       res.send(data);
+  //     }
+  //     interval ++;
+  //     if(interval === 10){
+  //       count ++;
+  //       helper(10 , 101);
+  //     }else{
+  //       helper(0, 0)
+  //     }
+      
+  //   console.log("done");
+  // }
+  
+  // if(!done){
+  //   helper(1, 10);
+  // }
+
+
+
+
+
+
+  //   console.log("passed the function with counter at ", count);
 
 
   //query database
@@ -75,8 +110,7 @@ app.get("/test", (req, res) => {
     //then set done = false;
       // and call the heloer function again
 
-  const items = data;
-  res.send(items);
+
 })
 
 app.post("/users", middleware.itemLookup, async (req, res) => {
