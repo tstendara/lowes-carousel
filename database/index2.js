@@ -10,14 +10,13 @@ con.connection(function(err) {
     console.log("connected");
 })
 
-const SeedDb = () => {
+const SeedDb = (data) => {
     
     con.query(`input()`)
 }
 
 const selectOneById = (item) => {
-
-        con.query(`Select * from images where id=`)
+    con.query(`Select * from images where id=`)
 }
 
 
