@@ -1,4 +1,4 @@
-const db = require("../database/index.js");
+const db = require("../config/index.js/index.js");
 
 const whitelist = [
   "http://fec-proxy.us-east-1.elasticbeanstalk.com",
