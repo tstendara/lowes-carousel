@@ -2,13 +2,6 @@
 
 > Lowe's, but not!
 
-## Related Projects
-
-  - https://github.com/teamName/repo
-  - https://github.com/teamName/repo
-  - https://github.com/teamName/repo
-  - https://github.com/teamName/repo
-
 ## Table of Contents
 
 1. [Usage](#Usage)
