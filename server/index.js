@@ -1,11 +1,12 @@
-const app = require("./app");
+// const app = require("./app");
 const express = require('express');
+const app = express();
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const db = require("../database/index.js"); //changed routing to new index
 // const db = require("../database/index.js");
-// const middleware = require("./middleware.js");
-// const helpers = require("./helpers.js");
+const middleware = require("./middleware.js");
+const helpers = require("./helpers.js");
 const faker = require("faker");
 // const test = require('./dataGenerator.js');
 const PORT = 3000;
@@ -15,153 +16,135 @@ const PORT = 3000;
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(cookieParser());
-// app.use(cors(middleware.corsOptions));
-
+app.use(cors(middleware.corsOptions));
 app.use(express.static("dist"));
 
 
-
-
-// app.get("/testingRequest", (req, res) => {
-  
-//   db.selectOneById(  ,(err, suc))
-// })
-
 app.get("/seedDaDB", (req, res) => {
   
-  let data = {};
-  let count = 0;
-  let start = 1;
-  let end = 10;
-
-  const helper = (start, end) => {
-
-    for(productID=start; productID <= end; productID++){
+    let data = {};
+    for(i=355; i <= 2000; i++){
       let alt = faker.commerce.productName(); //same as name
       let src = faker.image.avatar();  //also name of obj as string ex: "0"{"alt": "name of product"}
       let category = faker.commerce.product();
       let subCategory = faker.commerce.department();
-      data[productID] = {"alt": alt, "src": src, "id": productID, "category": category, "subCategory": subCategory, "name": alt}
+      data[i] = {"alt": alt, "src": src, "id": i, "category": category, "subCategory": subCategory, "name": alt}
     }
 
+
+    db.SeedDb(data, (err, suc) => {
+      if(err) {
+        console.error("ERR server", err);
+      }else{
+        res.status(200).send("SUCC")
+      }
+    })
     //query
-
-    count ++;
-    let done = true;
-  }
-
-  if(!done){ //runs once
-    helper(start, end);
-  }
-  if(count !== 0){
-    start = count * 100000 + 1;
-    end = start + 100000;
-    helper(start, end)
-  }
-
-  const items = data;
-  res.send(items);
-
 })
 
-  // const helper = (start, end) => {
-  //   //if count === 1, then itll start on 101,000
-  //     console.log(count, "counter");
-  //   if(count !== 0){
-  //       start = count * 100 +1;
-  //       end = start + 9;
-  //     }
 
-  //     if(count !== 0 && interval !== 0){
-  //       start = start +10;
-  //       end = start + 10;
-  //     }
-
-  //     console.log(interval, "interval", start, "start", end, "end");
-  //     for(i=start; i <= end; i++){
-  //         let alt = faker.commerce.productName(); //same as name
-  //         let src = faker.image.avatar();  //also name of obj as string ex: "0"{"alt": "name of product"}
-  //         let category = faker.commerce.product();
-  //         let subCategory = faker.commerce.department();
-  //         data[i] = {"alt": alt, "src": src, "id": i, "category": category, "subCategory": subCategory, "name": alt}
-  //     }
-  //     console.log(interval, "interval");
-  //     if(count === 3){
-  //       res.send(data);
-  //     }
-  //     interval ++;
-  //     if(interval === 10){
-  //       count ++;
-  //       helper(10 , 101);
-  //     }else{
-  //       helper(0, 0)
-  //     }
-      
-  //   console.log("done");
-  // }
+app.post("/users", middleware.itemLookup, async (req, res) => {
   
-  // if(!done){
-  //   helper(1, 10);
-  // }
+    const item = req.body.item;
+    // console.log(item, "SERVER /users");
+    let sessionId = req.cookies.user_session;
+    // console.log(sessionId, "sessionid");
+    if (!req.cookies.user_session) { // for testing
+      sessionId = helpers.randomStringifiedNumberOfLength(32);
+      await db.createUser(sessionId, (err, suc) => {
+        if(err){
+          throw err;
+        }else{
+          // console.log(suc, "GOT ITTTTT");
+          return suc;
+        }
+      });
+      res.cookie("user_session", sessionId);
+    }
+    // console.log("Right before getUser");
+    let user;
 
+    db.getUser(sessionId, (err, suc) => {
+      if(err){
+        throw err;
+      }else{
+        // console.log(suc[0], "getUser");
+        // console.log(suc, "loadbrglkjqnerobnqelrnbqebrqerbbwrtn@@@@@");
+        user = suc[0];
+        // console.log(user.id, item.id, "item.id, and user.id");
+        db.recordView(user.id, item.id, (err, suc) => {
+          if(err){
+            console.log(err, "DIDNT RECORD" );
+          }else{
+            return suc;
+            
+          }
+        });
+      }
+    })
 
+    res.end();
+});
 
-
-
-
-  //   console.log("passed the function with counter at ", count);
-
-
-  //query database
+app.get("/carousels", middleware.itemLookup, async (req, res) => {
+  const item = req.body.item;
+  const carousels = {};
+  done = false;
+  let count = 0;
   
-  // if count !== 100
-    //then set done = false;
-      // and call the heloer function again
+   await db.selectRelated(item, (err, suc) => {
+    if(err){
+      console.log("/carosels bug", err);
+    }else{
+      // console.log("CAROUSSEL RELATED", suc);
+      carousels.related = suc;
+      // console.log(carousels.related, "CARSRELATEDDDDDD");
+      db.selectSameCategory(item, (err, suc) => {
+        if(err){
+          console.log("err", "CAROUSEELCAMECATEFORY");
+        }else{
+          // console.log(suc, "SAMECATEGORY");
+          const sameCategory = suc;
+          // console.log(item.id, "ITEMIDDDDDDD");
+          db.getAlsoViewedFiller(item.id, (err, suc) => {
+            if(err){
+              console.log(err, "also viewevedfiller" );
+            }else{
+              // console.log(suc, "alsoViewevFiller");
+              // console.log(sameCategory, "CAROUSELRELATED");
+              const alsoViewedFiller = suc;
+              console.log("viewed\n", alsoViewedFiller,  "\ncategory\n", sameCategory[0], "\nRELATED\n", carousels.related);
+              let results = helpers.concatOnlyUnique(sameCategory, alsoViewedFiller) ;
+              carousels.alsoViewed = results;
 
+              console.log(carousels.alsoViewed, "abfsgqehrlgkn");
+                  // console.log(carousels.alsoViewed);
+             db.getUserHistory(req.cookies.user_session, item.id, (err, results) => {
+               if(err){
+                console.log(err);
+               }else{
+                carousels.prevViewed = results;
+                res.send(carousels);
+               }
+             });
 
+             
+            
+              }
+             
+            })
+          }
+          
+        });
+        }
+      });
+});
+  
+  
 
-
-// app.post("/users", middleware.itemLookup, async (req, res) => {
-//   try {
-//     const item = req.body.item;
-//     let sessionId = req.cookies.user_session;
-//     if (!req.cookies.user_session) {
-//       sessionId = helpers.randomStringifiedNumberOfLength(32);
-//       await db.createUser(sessionId);
-//       res.cookie("user_session", sessionId);
-//     }
-//     const user = await db.getUser(sessionId);
-//     await db.recordView(user.id, item.id);
-//     res.status(201);
-//   } catch (err) {
-//     console.log("duplicate userHist insertion attempted, probably");
-//   } finally {
-//     res.send();
-//   }
-// });
-
-// app.get("/carousels", middleware.itemLookup, async (req, res) => {
-//   const item = req.body.item;
-//   const carousels = {};
-
-
-//   carousels.related = await db.selectRelated(item);
-//   const sameCategory = await db.selectSameCategory(item);
-//   const alsoViewedFiller = await db.getAlsoViewedFiller(item.id);
-//   carousels.alsoViewed = helpers.concatOnlyUnique(
-//     sameCategory,
-//     alsoViewedFiller
-//   );
-//   carousels.prevViewed = await db.getUserHistory(
-//     req.cookies.user_session,
-//     item.id
-//   );
-
-//   res.send(carousels);
-// });
+  
 
 app.listen(PORT, () => {
   console.log(`what up, i'm on ${PORT}, baby`);
 });
 
-module.exports = { app };

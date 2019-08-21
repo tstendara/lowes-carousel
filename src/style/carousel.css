@@ -1,6 +1,6 @@
 @font-face {
   font-family: loweScriptIcons;
-  src: url(http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/fonts/lowes-icons.woff);
+  src: url(http://localhost:3000/lowes-icons.woff);
 }
 
 .slick-prev {

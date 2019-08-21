@@ -70,10 +70,20 @@ class Carousel extends React.Component {
         <h2>{this.props.name}</h2>
         <Slider ref={this.slider} {...settings}>
           {this.props.images.map((image, index) => {
+
             {
+              console.log(image.id);
               if (image.id.toString().length === 1) {
-                image.id = "00" + image.id;
+                image.id = "000000" + image.id;
               } else if (image.id.toString().length === 2) {
+                image.id = "00000" + image.id;
+              } else if (image.id.toString().length === 3) {
+                image.id = "0000" + image.id;
+              }else if (image.id.toString().length === 4) {
+                image.id = "000" + image.id;
+              }else if (image.id.toString().length === 5) {
+                image.id = "00" + image.id;
+              }else if (image.id.toString().length === 6) {
                 image.id = "0" + image.id;
               }
             }

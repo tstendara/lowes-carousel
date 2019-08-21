@@ -1,4 +1,4 @@
-const db = require("../config/index.js/index.js");
+const db = require("../database/index");
 
 const whitelist = [
   "http://fec-proxy.us-east-1.elasticbeanstalk.com",
@@ -24,6 +24,7 @@ const corsOptions = {
 };
 
 const itemLookup = async (req, res, next) => {
+  // console.log("MIDDLEWARE");
     let id;
     let regex = /[\/:. ]+/g;
     if (req.method === 'POST') {
@@ -31,8 +32,18 @@ const itemLookup = async (req, res, next) => {
     } else if (req.method === 'GET') {
       id = req.query.id.replace(regex, '');
     }
-    req.body.item = await db.selectOneById(id);
-    next();
+    // console.log(id, "BODYYYy");
+    await db.selectOneById(id, (err, suc) => {
+      if(err){
+        console.log("err");
+      }else{
+        // console.log(suc[0], "lkhdfgihobdakfhb MIDDLEWARE&&&&&&&");
+        req.body.item = suc[0];
+        next();
+      }
+    });
+    
+   
   };
 
   module.exports = { itemLookup, corsOptions };

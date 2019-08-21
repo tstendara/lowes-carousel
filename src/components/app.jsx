@@ -83,7 +83,7 @@ class App extends React.Component {
   updateUserHistory(selectedProductId) {
     return Number(selectedProductId) > 0 && Number(selectedProductId) < 101
       ? Axios.post(
-          "http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/users",
+          "http://localhost:3000/users",
           {
             itemId: selectedProductId
           },
@@ -98,9 +98,9 @@ class App extends React.Component {
 
   getCarousels() {
     return Number(this.state.productId) > 0 &&
-      Number(this.state.productId) < 101
+      Number(this.state.productId) < 600000
       ? Axios.get(
-          `http://fec-lowes-carousel.us-east-2.elasticbeanstalk.com/carousels?id=${this.state.productId}`,
+          `http://localhost:3000/carousels?id=${this.state.productId}`,
           { withCredentials: true }
         )
       : new Promise((res, rej) => {
@@ -116,6 +116,7 @@ class App extends React.Component {
       { withCredentials: true }
     )
       .then(allPrices => {
+        allPrices.data = [10.59, 99.99, 300];
         const prices = {};
         for (let carousel in this.state.carousels) {
           const arr = [];
@@ -147,7 +148,7 @@ class App extends React.Component {
 
   getReviews() {
     Axios.get(
-      `http://ec2-18-225-6-113.us-east-2.compute.amazonaws.com/api/stats/all`,
+      `http://localhost:3000/api/stats/all`,
       { withCredentials: true }
     )
       .then(allReviews => {
@@ -194,6 +195,7 @@ class App extends React.Component {
   render() {
     return (
       <div>
+        {console.log(this.state.carousels.alsoViewed.length)}
         {this.state.carousels.alsoViewed.length > 0 ? (
           <Carousel
             name={this.state.carouselNames[0]}

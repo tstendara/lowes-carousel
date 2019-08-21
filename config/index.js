@@ -185,15 +185,15 @@ const updateScrapings = async scrapings => {
 };
 
 module.exports = {
-  selectOneById,
-  selectOneByName,
-  selectRelated,
-  selectSameCategory,
-  getAlsoViewedFiller,
-  createUser,
-  getUser,
-  getUserHistory,
-  recordView
+  selectOneById, //
+  selectOneByName, //
+  selectRelated, // 
+  selectSameCategory, //
+  getAlsoViewedFiller,//
+  createUser,//
+  getUser, //
+  getUserHistory, // 
+  recordView // 
 };
 
 // pool single query method below for likely refactor ---
